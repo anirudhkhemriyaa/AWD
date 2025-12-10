@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Import data</h3>
+    <form action="" method="post">
+    {% csrf_token %}
+    <input type="file" name="file" >
+    <input type="text" name="model_name" >
+    <button>Submit</button>
+    </form>
+</body>
+</html>

@@ -16,6 +16,10 @@ class Command(BaseCommand):
         #fetch data from db 
         model_name = kwargs['model_name'].capitalize()
 
+
+
+
+        #fetching model from which data to get
         model = None
         for app_config in apps.get_app_configs():
             try:

@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand , CommandError
+from django.db import DataError
 # from Data_entry.models import Student instead of this 
 from django.apps import apps
 import csv
@@ -28,9 +29,14 @@ class Command(BaseCommand):
         if not model:
             raise CommandError(f'Model {model_name} not found' )
         
+        else:
+            model_fields = [field.name for field in model._meta.fields if field.name != 'id']
+            with open(file_path , 'r') as file:
+                reader = csv.DictReader(file)
+                csv_header = reader.fieldnames
 
-        with open(file_path , 'r') as file:
-            reader = csv.DictReader(file)
-            for row in reader:  
-                model.objects.create(**row)
+                if csv_header != model_fields:
+                    raise DataError(f"csv file doesn't match with the {model_name} table fields")
+                for row in reader:  
+                    model.objects.create(**row)
         self.stdout.write(self.style.SUCCESS('You file data is inserted'))

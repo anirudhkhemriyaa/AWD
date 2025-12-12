@@ -133,3 +133,6 @@ MESSAGE_TAGS = {
     messages.INFO: "",
     50: "critical",
 }
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379'

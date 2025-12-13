@@ -2,6 +2,9 @@ from django.apps import apps
 from django.core.management.base import CommandError
 import csv
 from django.db import DataError
+from django.core.mail import EmailMessage
+from django.conf import settings
+
 
 
 
@@ -26,7 +29,7 @@ def check_csv_error(file_path , model_name):
             model = apps.get_model(app_config.label , model_name)
             break
         except LookupError:
-            continue
+            continue 
 
     if not model:
         raise CommandError(f'Model {model_name} not found' )
@@ -47,4 +50,14 @@ def check_csv_error(file_path , model_name):
     
     return model
 
+ 
 
+
+def send_email_notification(mail_subject , message , to_email):  
+    try:
+        from_email = settings.DEFAULT_FROM_EMAIL
+        mail = EmailMessage(mail_subject , message , from_email , to=[to_email])
+        mail.send()
+    except Exception as e:
+        raise e
+        

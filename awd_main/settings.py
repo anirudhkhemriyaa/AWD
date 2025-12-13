@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v=ly_b+=_g!it3!r5i$7$28i=@*du_i)xxly*x#3jwm4rf@xsq'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG' ,default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -136,3 +137,14 @@ MESSAGE_TAGS = {
 
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
+
+
+# Email config
+
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_POST = config('EMAIL_POST' , cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Automate with django <anirudhkhemriya@gmail.com>'
+DEFAULT_TO_EMAIL = 'Automate with django <anirudhakhemriya@gmail.com>'

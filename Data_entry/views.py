@@ -1,10 +1,11 @@
 from django.shortcuts import render , redirect
 from . import models
-from .utils import get_all_models
+from .utils import check_csv_error, get_all_models
 from uploads.models import Upload
 from django.conf import settings
 from django.core.management import call_command
 from django.contrib import messages
+from .tasks import import_data_task
 
 # Create your views here.
 
@@ -26,14 +27,22 @@ def home(request):
 
         complete_path = base_url+relative_path
 
+        # handling error
         try:
-            call_command('import',complete_path , model_name)
-            messages.success(request , "Data is imported succesfully")
+            check_csv_error(complete_path , model_name)
         except Exception as e:
-            messages.error(request,str(e))
+            messages.error(request , str(e))
+            return redirect('home')
+        
+
+        #making the importing a celery task
+        import_data_task.delay(complete_path,model_name)
+
+        messages.success(request , 'Your data is in processing , you will we notified')
+
         
         return redirect("home")
     context = {
         'models':all_models
     }
-    return render(request , "home.html" , context)
+    return render(request , "home.html" , context) 

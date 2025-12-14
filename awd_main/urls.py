@@ -22,6 +22,7 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('' , include('Data_entry.urls')),
+    path('data_entry/' , include('Data_entry.urls')),
     path('celery-test/' ,views.celery_test),
+    path('' ,views.Base , name="base"),
 ] + static(settings.MEDIA_URL , document_root = settings.MEDIA_ROOT)

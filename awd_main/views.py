@@ -7,3 +7,7 @@ from Data_entry.tasks import celery_test_task
 def celery_test(request):
     celery_test_task.delay()
     return HttpResponse('<h3>function</h3>')
+
+
+def Base(request):
+    return render(request , "base.html")

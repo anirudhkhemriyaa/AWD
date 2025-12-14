@@ -2,6 +2,7 @@ import csv
 from django.core.management.base import BaseCommand
 from Data_entry.models import Student
 from django.apps import apps
+from Data_entry.utils import generate_csv_file
 
 
 import datetime
@@ -26,17 +27,13 @@ class Command(BaseCommand):
                 model = apps.get_model(app_config.label , model_name)
                 break
             except LookupError:
-                continue
+                pass
 
 
         if model is not None:
             dataset = model.objects.all()
-        print("Fetching the data....")
 
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
-
-        # define file path
-        file_path = f'exported_data_of_{model_name}-{timestamp}.csv'
+        file_path = generate_csv_file(model_name)
 
         # open file and write file
 

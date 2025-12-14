@@ -1,0 +1,9 @@
+<h3>Send email</h3>
+
+<form action="send_email" method = "POST" , enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type= "submit" >Proceed</button>
+</form>
+
+{% include 'alert.html' %}

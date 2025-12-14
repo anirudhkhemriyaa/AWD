@@ -6,8 +6,8 @@
     <title>HomePage</title>
 </head>
 <body>
-    {% is user.is_authenticated %}
-    <a href="{% url 'logout' %}">Register</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}">logout</a>
     {% else %}
     <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'register' %}">Register</a>
@@ -15,6 +15,7 @@
     <h3>HomePage</h3>
     <a href="{% url 'home' %}">Data Import</a> |
     <a href="{% url 'export' %}">Data Export</a>
+    <a href="{% url 'send_email' %}">Bulk Emailing</a>
 </body>
 </html>
 

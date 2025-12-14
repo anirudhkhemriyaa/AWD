@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'uploads',
     'crispy_forms',
     'crispy_bootstrap5',
-    'Email'
+    'Email',
+    'ckeditor',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -148,13 +150,26 @@ CELERY_BROKER_URL = 'redis://localhost:6379'
 
 # Email config
 
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_POST = config('EMAIL_POST' , cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = True
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_POST = config('EMAIL_POST' , cast=int)
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Automate with django <anirudhkhemriya@gmail.com>'
 DEFAULT_TO_EMAIL = 'Automate with django <anirudhakhemriya@gmail.com>'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'height': 200,
+    },
+}
+
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
+ANYMAIL = {
+    # (exact settings here depend on your ESP...)
+    "SENDINBLUE_API_KEY": config('SENDINBLUE_API_KEY'),
+}

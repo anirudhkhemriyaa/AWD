@@ -1,4 +1,8 @@
+{% load static %}
+
 <h3>Send email</h3>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 
 <form action="send_email" method = "POST" , enctype="multipart/form-data">
     {% csrf_token %}
@@ -6,4 +10,4 @@
     <button type= "submit" >Proceed</button>
 </form>
 
-{% include 'alert.html' %}
+{% include 'alerts.html' %}

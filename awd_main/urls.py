@@ -25,4 +25,7 @@ urlpatterns = [
     path('data_entry/' , include('Data_entry.urls')),
     path('celery-test/' ,views.celery_test),
     path('' ,views.Base , name="base"),
+    path('register' ,views.register , name="register"),
+    path('login' ,views.login , name="login"),
+    path('logout' ,views.logout , name="logout"),
 ] + static(settings.MEDIA_URL , document_root = settings.MEDIA_ROOT)

@@ -6,6 +6,12 @@
     <title>HomePage</title>
 </head>
 <body>
+    {% is user.is_authenticated %}
+    <a href="{% url 'logout' %}">Register</a>
+    {% else %}
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'register' %}">Register</a>
+    {% endif %}
     <h3>HomePage</h3>
     <a href="{% url 'home' %}">Data Import</a> |
     <a href="{% url 'export' %}">Data Export</a>

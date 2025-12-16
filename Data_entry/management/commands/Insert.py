@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from Data_entry.models import Student
 
+
+#==================Inserting command only for testing purpose===============
 class Command(BaseCommand):
     help = "Insert  Data "
 

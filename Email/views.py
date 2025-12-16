@@ -9,24 +9,20 @@ from .models import Email
 from django.db.models import Sum
 # Create your views here.
 
-
+#=============================Send bulk email view===================
 def send_email(request):
     if request.method == "POST":
         form = Email_form(request.POST , request.FILES)
         if form.is_valid():
             email = form.save()
-            #send Email --------
             mail_subject = request.POST.get('subject')
             msg = request.POST.get('body')
             email_list = request.POST.get('email_list')
-            # access the selected list 
             email_list = email.email_list 
 
             # Extract email address from subscriber model
             subscribers = Subscriber.objects.filter(email_list=email_list)
             to_email=[email.email_address for email in subscribers ]
-
-
 
             if email.attachment:
                 attachment = email.attachment.path
@@ -37,7 +33,6 @@ def send_email(request):
 
             send_email_task.delay(mail_subject , msg , to_email , attachment , email_id)
 
-            # Message of success
             messages.success(request , 'Email sent successfully')
             return redirect('send_email')
 

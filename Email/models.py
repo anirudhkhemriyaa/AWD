@@ -2,6 +2,7 @@ from django.db import models
 from ckeditor.fields import RichTextField
 # Create your models here.
 
+#=======================List model set of user belongs to which list (e.g. customer , student)
 
 class List(models.Model):
     email_list = models.CharField(max_length=25)
@@ -14,7 +15,7 @@ class List(models.Model):
         return count
     
 
-
+#============================ Email address of user belonging to particular list========
 
 class Subscriber(models.Model):
     email_list = models.ForeignKey(List , on_delete=models.CASCADE)
@@ -23,7 +24,7 @@ class Subscriber(models.Model):
     def __str__(self):
         return self.email_address
 
-
+#=====================================Email part composing email========================
 
 class Email(models.Model):
     email_list = models.ForeignKey(List , on_delete=models.CASCADE )
@@ -36,6 +37,8 @@ class Email(models.Model):
         return self.subject
     
 
+#========================================Number of sent to email (count)=====================
+
 class Sent(models.Model):
     email = models.ForeignKey(Email , on_delete=models.CASCADE)
     total_sent = models.IntegerField()
@@ -43,6 +46,8 @@ class Sent(models.Model):
     def __str__(self):
         return f"Sent: {self.email.subject} at {self.total_sent}"
 
+
+#===================Email track (when opened,clicked to link)====================
 
 class EmailTracking(models.Model):
     email = models.ForeignKey(Email , on_delete=models.CASCADE)

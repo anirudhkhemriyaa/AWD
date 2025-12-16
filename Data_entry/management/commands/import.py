@@ -6,6 +6,9 @@ import csv
 from Data_entry.utils import check_csv_error
 
 
+
+#=========================Import Command giving data to db===========================
+
 class Command(BaseCommand):
     help = "You can upload csv file with relatable data and data is inserted automatically"
 
@@ -19,8 +22,6 @@ class Command(BaseCommand):
         model_name = kwargs['model_name'].capitalize()
 
         model = check_csv_error(file_path , model_name)
-
-
         with open(file_path,'r') as file:
             reader = csv.DictReader(file)
             for row in reader:  

@@ -10,7 +10,7 @@ from Email.models import Email , Sent
 
 
 
-
+#=======================Fetching all models in our project===========================
 
 def get_all_models():
     default = ['Upload','ContentType' , 'Session','LogEntry' , 'Group','Permission', 'User']
@@ -18,12 +18,11 @@ def get_all_models():
     for model in apps.get_models():
         if model.__name__ not in default:
             custom_model.append(model.__name__)
-    print(model.__name__)
     return custom_model
 
 
 
-
+#======Checking Header error while importing the data whether field is correct or not=====
 
 def check_csv_error(file_path , model_name):
     model = None
@@ -42,11 +41,11 @@ def check_csv_error(file_path , model_name):
 
     try:
         with open(file_path , 'r') as file:
-                reader = csv.DictReader(file)
-                csv_header = reader.fieldnames
+            reader = csv.DictReader(file)
+            csv_header = reader.fieldnames
 
-                if csv_header != model_fields:
-                    raise DataError(f"csv file doesn't match with the {model_name} table fields")
+            if csv_header != model_fields:
+                raise DataError(f"csv file doesn't match with the {model_name} table fields")
                 
     except Exception as e:
         raise e
@@ -54,17 +53,17 @@ def check_csv_error(file_path , model_name):
     return model
 
  
+ #=================================Sending Eamil======================= =============
 
-
-def send_email_notification(mail_subject , message , to_email , attachment=None , email_id=None):  
+def send_email_notification(mail_subject , message , to_email , attachment=None , email_id=None): 
     try:
         from_email = settings.DEFAULT_FROM_EMAIL
         mail = EmailMessage(mail_subject , message , from_email , to=to_email)
         if attachment is not None:
             mail.attach_file(attachment)
-
             mail.content_subtype = "html"
         mail.send()
+        #---------------------------- Count to email sent ---------------------------
         email = Email.objects.get(id=email_id)
         sent = Sent()
         sent.email = email
@@ -75,12 +74,10 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
         raise e
         
 
-
+#=======================Generating csv file name and path for exporting data=================
 
 def generate_csv_file(model_name):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
-
-        # define file path
 
     export_dir = 'exported_data'
 

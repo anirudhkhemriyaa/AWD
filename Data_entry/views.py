@@ -9,38 +9,29 @@ from .tasks import import_data_task , export_data_task
 
 # Create your views here.
 
-
+#======================it is a importing view named as home ==========================
 def home(request):
     all_models = get_all_models()
     if request.method=="POST":
         file_path = request.FILES.get('file_name')
         model_name = request.POST.get('model_name')
-        print(model_name)
-
 
         upload = Upload.objects.create(file=file_path , model_name=model_name)
-
-
         relative_path = str(upload.file.url)
-
         base_url = str(settings.BASE_DIR)
 
         complete_path = base_url+relative_path
 
-        # handling error
         try:
             check_csv_error(complete_path , model_name)
         except Exception as e:
             messages.error(request , str(e))
             return redirect('home')
-        
 
-        #making the importing a celery task
         import_data_task.delay(complete_path,model_name)
 
         messages.success(request , 'Your data is in processing , you will we notified')
 
-        
         return redirect("home")
     context = {
         'models':all_models
@@ -48,7 +39,7 @@ def home(request):
     return render(request , "home.html" , context) 
 
 
-
+#=========================Exporting view ===========================
 
 def export(request):
     if request.method=="POST":

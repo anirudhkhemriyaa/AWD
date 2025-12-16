@@ -1,22 +1,22 @@
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
-import time
 from Data_entry.tasks import celery_test_task
 from .forms import RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import auth
 
-
+#=================Test celery view============================
  
 def celery_test(request):
     celery_test_task.delay()
     return HttpResponse('<h3>function</h3>')
 
-
+#=============Landing page===========
 def Base(request):
     return render(request , "base.html")
 
+#=========================Registration view====================
 def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
@@ -26,8 +26,6 @@ def register(request):
             return redirect('register')
         else:
             return redirect('register')
-
-
     else:
         form = RegistrationForm()
         context ={
@@ -36,6 +34,7 @@ def register(request):
     return render(request , "register.html" , context)
 
 
+#=========================Login view==========================
 
 def login(request):
     if request.method=='POST':
@@ -59,6 +58,9 @@ def login(request):
             'form':form,
         }
     return render(request , "login.html" , context)
+
+
+#=========================Logout view=======================
 
 def logout(request):
     auth.logout(request)

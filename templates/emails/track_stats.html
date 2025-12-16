@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center p-5" >Tracking Statistics</h2>
+    <div class="row">
+        <div class= "col-md-8 mx-auto" >
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class ="col-md-6" >
+                            Total Emails Sent: 100
+                            <br>
+                            Sent at : {{email.sent_at}}
+                        </div>
+                        <div class ="col-md-6 text-end" >
+                            opened: 100
+                            <br>
+                            clicked : 0
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="cardl-body">
+                        {{email.subject}}
+                    </div>
+                    <div class="mail-body">
+                        {{email.body|safe}}
+                    </div>
+                    {% if email.attachment %}
+                        <div class="mt-3">
+                            <a href="{{ email.attachment.url }}" target="_blank">View Attachment</a>
+                        </div>
+                    {% endif %}
+                </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

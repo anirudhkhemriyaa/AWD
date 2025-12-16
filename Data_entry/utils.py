@@ -6,6 +6,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 import datetime
 import os
+from Email.models import Email , Sent
 
 
 
@@ -55,7 +56,7 @@ def check_csv_error(file_path , model_name):
  
 
 
-def send_email_notification(mail_subject , message , to_email , attachment=None):  
+def send_email_notification(mail_subject , message , to_email , attachment=None , email_id=None):  
     try:
         from_email = settings.DEFAULT_FROM_EMAIL
         mail = EmailMessage(mail_subject , message , from_email , to=to_email)
@@ -64,6 +65,12 @@ def send_email_notification(mail_subject , message , to_email , attachment=None)
 
             mail.content_subtype = "html"
         mail.send()
+        email = Email.objects.get(id=email_id)
+        sent = Sent()
+        sent.email = email
+        sent.total_sent = email.email_list.count_emails()
+        sent.save()
+
     except Exception as e:
         raise e
         

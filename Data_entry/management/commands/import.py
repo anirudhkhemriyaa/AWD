@@ -25,4 +25,4 @@ class Command(BaseCommand):
             reader = csv.DictReader(file)
             for row in reader:  
                 model.objects.create(**row)
-        self.stdout.write(self.style.SUCCESS('You file data is inserted'))
+        self.stdout.write(self.style.SUCCESS('Your file data is inserted'))

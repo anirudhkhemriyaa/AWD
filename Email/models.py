@@ -9,6 +9,10 @@ class List(models.Model):
     def __str__(self):
         return self.email_list
     
+    def count_emails(self):
+        count = Subscriber.objects.filter(email_list=self.email_list).count()
+        return count
+    
 
 
 
@@ -30,3 +34,22 @@ class Email(models.Model):
 
     def __str__(self):
         return self.subject
+    
+
+class Sent(models.Model):
+    email = models.ForeignKey(Email , on_delete=models.CASCADE)
+    total_sent = models.IntegerField()
+
+    def __str__(self):
+        return f"Sent: {self.email.subject} at {self.total_sent}"
+
+
+class EmailTracking(models.Model):
+    email = models.ForeignKey(Email , on_delete=models.CASCADE)
+    subscriber = models.ForeignKey(Subscriber , on_delete=models.CASCADE , null=True, blank=True)
+    unique_id = models.CharField(max_length=100 ,unique=True)
+    opened = models.BooleanField(null=True,default=False)
+    clicked = models.BooleanField(null=True,default=False)
+
+    def __str__(self):
+        return f"Tracking for {self.email.subject}"

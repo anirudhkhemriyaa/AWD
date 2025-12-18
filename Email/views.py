@@ -87,7 +87,7 @@ def track_click(request , unique_id):
 #=========================tracking dashboard view=========================
 
 def tracking_dashboard(request):
-    emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent'))
+    emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent')).order_by('-sent_at')
     context = {
         'emails':emails
     }

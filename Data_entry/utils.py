@@ -68,7 +68,7 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
                 email = Email.objects.get(pk=email_id)
                 subscriber = Subscriber.objects.get(email_list=email.email_list , email_address=recipient)
                 timestamp = str(time.time())
-                data_to_hash = f"{recipient}-{timestamp}"
+                data_to_hash = f"{recipient}{timestamp}"
                 unique_id = hashlib.sha256(data_to_hash.encode()).hexdigest()
                 email_tracking = EmailTracking.objects.create(
                     email=email,
@@ -88,7 +88,7 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
                 if urls:
                     for url in urls:
                         tracked_url = f"{click_tracking_url}?url={url}"
-                        new_message = message.replace(f"{url}" , f"{tracked_url}")
+                        new_message = new_message.replace(f"{url}" , f"{tracked_url}")
                 else:
                     print("No links found in the email message.")
 
@@ -101,7 +101,7 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
             mail.content_subtype = "html"
             mail.send()
         #---------------------------- Count to email sent ---------------------------
-        if email:
+        if email_id:
             sent = Sent()
             sent.email = email
             sent.total_sent = email.email_list.count_emails()

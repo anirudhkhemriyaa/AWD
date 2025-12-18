@@ -49,36 +49,40 @@ def send_email(request):
 
 
 
-PIXEL_GIF = (
-    b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00'
-    b'\x80\x00\x00\x00\x00\x00\xff\xff\xff'
-    b'\x21\xf9\x04\x01\x00\x00\x00\x00'
-    b'\x2c\x00\x00\x00\x00\x01\x00\x01\x00'
-    b'\x00\x02\x02\x44\x01\x00\x3b'
-)
+
 
 def track_open(request, unique_id):
+    print("tracking open...")
     try:
         email_tracking = EmailTracking.objects.get(unique_id=unique_id)
 
         if not email_tracking.opened_at:
             email_tracking.opened_at = timezone.now()
-            email_tracking.save(update_fields=["opened_at"])
+            email_tracking.save()
+            print("saved")
+            return HttpResponse("hello") 
+        else:
+            return HttpResponse("already opened")
 
     except EmailTracking.DoesNotExist:
-        pass  # do NOT expose state
+        return HttpResponse("bye-bye")
+          # do NOT expose state
 
-    response = HttpResponse(PIXEL_GIF, content_type="image/gif")
-    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response["Pragma"] = "no-cache"
-    response["Expires"] = "0"
-    return response
+    
 
 
 
 def track_click(request , unique_id):
-
-    pass 
+    try:
+        email_tracking = EmailTracking.objects.get(unique_id=unique_id)
+        original_url = request.GET.get('url')
+        if not email_tracking.clicked_at:
+            email_tracking.clicked_at = timezone.now()
+            email_tracking.save()
+        # Redirect to the original URL
+        return redirect(original_url)
+    except:
+        return HttpResponse("Invalid tracking link.")
 
 #=========================tracking dashboard view=========================
 

@@ -23,8 +23,9 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request , "Registration successful.")
-            return redirect('register')
+            return redirect('login')
         else:
+            messages.error(request , "Form is no saving")
             return redirect('register')
     else:
         form = RegistrationForm()

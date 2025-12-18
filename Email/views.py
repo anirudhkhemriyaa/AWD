@@ -1,12 +1,14 @@
+from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from .forms import Email_form
 from django.contrib import messages
 from Data_entry.utils import send_email_notification
 from django.conf import settings
-from .models import Subscriber
+from .models import EmailTracking, Sent, Subscriber
 from .tasks import send_email_task
 from .models import Email
 from django.db.models import Sum
+from django.utils import timezone
 # Create your views here.
 
 #=============================Send bulk email view===================
@@ -47,20 +49,41 @@ def send_email(request):
 
 
 
-def track_open(request , unique_id):
-    pass
+PIXEL_GIF = (
+    b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00'
+    b'\x80\x00\x00\x00\x00\x00\xff\xff\xff'
+    b'\x21\xf9\x04\x01\x00\x00\x00\x00'
+    b'\x2c\x00\x00\x00\x00\x01\x00\x01\x00'
+    b'\x00\x02\x02\x44\x01\x00\x3b'
+)
 
+def track_open(request, unique_id):
+    try:
+        email_tracking = EmailTracking.objects.get(unique_id=unique_id)
+
+        if not email_tracking.opened_at:
+            email_tracking.opened_at = timezone.now()
+            email_tracking.save(update_fields=["opened_at"])
+
+    except EmailTracking.DoesNotExist:
+        pass  # do NOT expose state
+
+    response = HttpResponse(PIXEL_GIF, content_type="image/gif")
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response
 
 
 
 def track_click(request , unique_id):
+
     pass 
 
-
+#=========================tracking dashboard view=========================
 
 def tracking_dashboard(request):
     emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent'))
-
     context = {
         'emails':emails
     }
@@ -70,7 +93,10 @@ def tracking_dashboard(request):
 
 def track_stats(request , unique_id):
     email = Email.objects.get(id=unique_id)
+    sent = Sent.objects.filter(email=email)
+
     context = {
-        'email':email
+        'email':email,
+        'total_sent':sent
     }
     return render(request , 'emails/track_stats.html' , context)

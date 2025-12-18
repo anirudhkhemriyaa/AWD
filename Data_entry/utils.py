@@ -1,3 +1,4 @@
+import hashlib
 from django.apps import apps
 from django.core.management.base import CommandError
 import csv
@@ -6,9 +7,9 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 import datetime
 import os
-from Email.models import Email , Sent
-
-
+from Email.models import Email, EmailTracking , Sent, Subscriber
+import time
+from bs4 import BeautifulSoup
 
 #=======================Fetching all models in our project===========================
 
@@ -58,17 +59,53 @@ def check_csv_error(file_path , model_name):
 def send_email_notification(mail_subject , message , to_email , attachment=None , email_id=None): 
     try:
         from_email = settings.DEFAULT_FROM_EMAIL
-        mail = EmailMessage(mail_subject , message , from_email , to=to_email)
-        if attachment is not None:
-            mail.attach_file(attachment)
+
+
+        for recipient in to_email:
+             #-----tracking record----
+            new_message=message
+            if email_id:
+                email = Email.objects.get(pk=email_id)
+                subscriber = Subscriber.objects.get(email_list=email.email_list , email_address=recipient)
+                timestamp = str(time.time())
+                data_to_hash = f"{recipient}-{timestamp}"
+                unique_id = hashlib.sha256(data_to_hash.encode()).hexdigest()
+                email_tracking = EmailTracking.objects.create(
+                    email=email,
+                    subscriber=subscriber,
+                    unique_id = unique_id,
+                )
+
+                #---------generate the tracking pixel url
+                base = settings.BASE_URL
+                click_tracking_url = f"{base}/Email/track/click/{unique_id}"
+                open_tracking_url = f"{base}/Email/track/open/{unique_id}"
+                print(f'open link >> {open_tracking_url}')
+                #------------search for link in msg-------
+                soap = BeautifulSoup(message , 'html.parser')
+                urls = [ a['href'] for a in soap.find_all('a' , href=True)]
+
+                if urls:
+                    for url in urls:
+                        tracked_url = f"{click_tracking_url}?url={url}"
+                        new_message = message.replace(f"{url}" , f"{tracked_url}")
+                else:
+                    print("No links found in the email message.")
+
+                open_tracking_image=f"<img src='{open_tracking_url}' width='1' height='1'>"
+                new_message += open_tracking_image
+                
+            mail = EmailMessage(mail_subject , new_message , from_email , to=[recipient])
+            if attachment is not None:
+                mail.attach_file(attachment)
             mail.content_subtype = "html"
-        mail.send()
+            mail.send()
         #---------------------------- Count to email sent ---------------------------
-        email = Email.objects.get(id=email_id)
-        sent = Sent()
-        sent.email = email
-        sent.total_sent = email.email_list.count_emails()
-        sent.save()
+        if email:
+            sent = Sent()
+            sent.email = email
+            sent.total_sent = email.email_list.count_emails()
+            sent.save()
 
     except Exception as e:
         raise e

@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG' ,default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -156,7 +156,7 @@ CELERY_BROKER_URL = 'redis://localhost:6379'
 # EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD')
 # EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Automate with django <anirudhkhemriya@gmail.com>'
-DEFAULT_TO_EMAIL = 'Automate with django <anirudhakhemriya@gmail.com>'
+DEFAULT_TO_EMAIL = 'Automate with django <khemriyakanha@gmail.com>'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
@@ -170,6 +170,10 @@ CKEDITOR_CONFIGS = {
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
 ANYMAIL = {
-    # (exact settings here depend on your ESP...)
     "SENDINBLUE_API_KEY": config('SENDINBLUE_API_KEY'),
 }
+
+
+CSRF_TRUSTED_ORIGINS = ['https://doretha-tuberoid-alec.ngrok-free.dev']
+BASE_URL = 'https://doretha-tuberoid-alec.ngrok-free.dev'
+

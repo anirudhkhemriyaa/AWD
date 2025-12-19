@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 #=======================Fetching all models in our project===========================
 
 def get_all_models():
-    default = ['Upload','ContentType' , 'Session','LogEntry' , 'Group','Permission', 'User']
+    default = ['List','Email','Sent','EmailTracking', 'Upload','ContentType' , 'Session','LogEntry' , 'Group','Permission', 'User']
     custom_model =[]
     for model in apps.get_models():
         if model.__name__ not in default:

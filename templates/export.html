@@ -5,30 +5,53 @@
 
 {% block content %}
 
-<h2 class="fw-bold mb-4 text-center">Export Data to CSV</h2>
+<div class="text-center mb-5">
+    <h2 class="fw-semibold">Export Data</h2>
+    <p class="text-secondary">
+        Download database records as a CSV file.
+    </p>
+</div>
 
-<div class="card shadow-sm mx-auto" style="max-width: 600px;">
-    <div class="card-body">
+<div class="row justify-content-center">
+    <div class="col-md-6">
 
-        <form action="{% url 'export' %}" method="post">
-            {% csrf_token %}
+        <div class="card bg-dark border border-secondary rounded-4">
+            <div class="card-body p-4">
 
-            <div class="mb-3">
-                <label for="model_name" class="form-label fw-semibold">Select Model</label>
-                <select id="model_name" name="model_name" class="form-select" required>
-                    <option value="" disabled selected>Select model</option>
-                    {% for model in models %}
-                        <option value="{{ model }}">{{ model }}</option>
-                    {% endfor %}
-                </select>
+                <form action="{% url 'export' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label for="model_name" class="form-label text-light fw-medium">
+                            Select Model
+                        </label>
+                        <select
+                            id="model_name"
+                            name="model_name"
+                            class="form-select bg-dark text-light border-secondary"
+                            required
+                        >
+                            <option value="" disabled selected class="text-secondary">
+                                Choose a model
+                            </option>
+                            {% for model in models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-info text-dark w-100 fw-medium">
+                        Export CSV
+                    </button>
+
+                    <div class="mt-4">
+                        {% include "alerts.html" %}
+                    </div>
+
+                </form>
+
             </div>
-
-            <button type="submit" class="btn btn-success w-100">Export</button>
-
-            <div class="mt-3">
-                {% include 'alerts.html' %}
-            </div>
-        </form>
+        </div>
 
     </div>
 </div>

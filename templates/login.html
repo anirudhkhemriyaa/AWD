@@ -5,29 +5,73 @@
 
 {% block content %}
 
-<div class="card shadow-sm mx-auto" style="max-width: 450px;">
-    <div class="card-body">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
-        <h2 class="fw-bold mb-4 text-center">Login</h2>
+            <div class="card bg-dark border border-secondary rounded-4 mt-5">
+                <div class="card-body p-4">
 
-        <form action="{% url 'login' %}" method="POST">
-            {% csrf_token %}
+                    <div class="text-center mb-4">
+                        <h2 class="fw-semibold text-light">Welcome Back</h2>
+                        <p class="text-secondary small">
+                            Sign in to continue
+                        </p>
+                    </div>
 
-            {{ form|crispy }}
+                    <form action="{% url 'login' %}" method="POST">
+                        {% csrf_token %}
 
-            <button type="submit" class="btn btn-primary w-100 mt-2">
-                Login
-            </button>
+                        <div class="text-light">
+                            {{ form|crispy }}
+                        </div>
 
-            <div class="text-center mt-3">
-                <small class="text-muted">
-                    Don’t have an account?
-                    <a href="{% url 'register' %}">Register</a>
-                </small>
+                        <button
+                            type="submit"
+                            class="btn btn-info text-dark w-100 fw-medium mt-3"
+                        >
+                            Login
+                        </button>
+
+                        <!-- 🔴 MESSAGE SECTION (CONTEXTUAL, BELOW BUTTON) -->
+                        {% if messages %}
+                        <div class="mt-3">
+                            {% for message in messages %}
+                                <div
+                                    class="alert bg-black text-white border border-secondary alert-dismissible fade show"
+                                    role="alert"
+                                >
+                                    {{ message }}
+                                    <button
+                                        type="button"
+                                        class="btn-close btn-close-white"
+                                        data-bs-dismiss="alert"
+                                    ></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+
+
+                        <div class="text-center mt-4">
+                            <span class="text-secondary small">
+                                Don’t have an account?
+                            </span>
+                            <a
+                                href="{% url 'register' %}"
+                                class="text-info text-decoration-none fw-medium ms-1"
+                            >
+                                Register
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
 
-        </form>
-
+        </div>
     </div>
 </div>
 

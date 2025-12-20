@@ -1,53 +1,67 @@
 {% extends "layout.html" %}
-
-{% block title %}Home | MyApp{% endblock %}
+{% block title %}Dashboard | AWM{% endblock %}
 
 {% block content %}
 
 <div class="text-center mb-5">
-    <h1 class="fw-bold">Welcome to the Dashboard</h1>
-    <p class="text-muted fs-5">Manage data, export files, and send bulk emails easily.</p>
+    <h1 class="fw-semibold mb-2">Dashboard</h1>
+    <p class="mb-0 width-75 mx-auto ">
+        Control your data and communication from one place.
+    </p>
 </div>
 
+<div class="soft-divider"></div>
+
 <div class="row g-4">
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h4>Data Import</h4>
-                <p class="text-muted">Upload and store CSV data.</p>
-                <a href="{% url 'home' %}" class="btn btn-primary w-100">Go</a>
-            </div>
+    <!-- Card -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h5 class="card-title mb-2">Data Import</h5>
+            <p class="card-text mb-4">
+                Upload CSV files and persist structured data.
+            </p>
+            <a href="{% url 'home' %}" class="btn btn-outline-light w-100">
+                Insert Data
+            </a>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h4>Data Export</h4>
-                <p class="text-muted">Download processed data.</p>
-                <a href="{% url 'export' %}" class="btn btn-success w-100">Go</a>
-            </div>
+    <!-- Card -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h5 class="card-title mb-2">Data Export</h5>
+            <p class="card-text mb-4">
+                Download processed and validated datasets.
+            </p>
+            <a href="{% url 'export' %}" class="btn btn-outline-light w-100">
+                Export Data
+            </a>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h4>Bulk Emailing</h4>
-                <p class="text-muted">Send mass emails efficiently.</p>
-                <a href="{% url 'send_email' %}" class="btn btn-danger w-100">Go</a>
-            </div>
+    <!-- Card -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h5 class="card-title mb-2">Bulk Email</h5>
+            <p class="card-text mb-4">
+                Send high-volume emails with reliability.
+            </p>
+            <a href="{% url 'send_email' %}" class="btn btn-outline-light w-100">
+                Send Emails
+            </a>
         </div>
     </div>
 
-
-     <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h4>Tracking Email</h4>
-                <p class="text-muted">Track the email open & clicked rates.</p>
-                <a href="{% url 'track_dashboard' %}" class="btn btn-danger w-100">Go</a>
-            </div>
+    <!-- Card -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h5 class="card-title mb-2">Email Tracking</h5>
+            <p class="card-text mb-4">
+                Track opens and click-through engagement.
+            </p>
+            <a href="{% url 'track_dashboard' %}" class="btn btn-outline-light w-100">
+                Track Emails
+            </a>
         </div>
     </div>
 </div>

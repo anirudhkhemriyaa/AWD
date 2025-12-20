@@ -5,6 +5,7 @@ from .forms import RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import auth
+from django.contrib.auth.models import User
 
 #=================Test celery view============================
  
@@ -17,15 +18,16 @@ def Base(request):
     return render(request , "base.html")
 
 #=========================Registration view====================
+
 def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request , "Registration successful.")
-            return redirect('login')
+            return redirect('profile')
         else:
-            messages.error(request , "Form is no saving")
+            messages.error(request , "Registration failed. Invalid information.")
             return redirect('register')
     else:
         form = RegistrationForm()
@@ -66,3 +68,11 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect('login')
+
+
+#=========================profile view=======================
+def profile(request):
+    user = User.objects.get(username=request.user.username)
+    context={
+        'user':user,}
+    return render(request , "profile.html" , context)

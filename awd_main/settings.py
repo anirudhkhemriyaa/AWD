@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -74,7 +75,7 @@ DATABASES = {
         'NAME': 'awm_db',
         'USER': 'postgres',
         'PASSWORD': 'First@00',
-        'HOST': 'localhost',   # or IP / service name
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -127,7 +128,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'media'
 
 
-from django.contrib.messages import constants as messages
 
 
 MESSAGE_TAGS = {
@@ -136,7 +136,7 @@ MESSAGE_TAGS = {
 }
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://localhost:6380'
 
 
 # Email config

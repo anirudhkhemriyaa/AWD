@@ -88,6 +88,8 @@ def profile_edit(request):
         profile.Name_of_Company = request.POST.get("Name_of_Company")
         profile.Name_of_Encharge = request.POST.get("Name_of_Encharge")
         profile.Sector = request.POST.get("Sector")
+        profile.email = request.POST.get("email")
+        profile.username = request.POST.get("username")
         profile.company_size = request.POST.get("company_size")
         profile.phone = request.POST.get("phone")
         profile.save()

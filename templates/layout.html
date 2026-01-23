@@ -112,10 +112,10 @@
     <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <p class="navbar-brand d-flex align-items-center gap-2" >
             <span class="fw-bold">AWM</span>
             <span class="badge rounded-pill text-bg-secondary small">Dashboard</span>
-        </a>
+        </p>
 
         <!-- Toggler -->
         <button class="navbar-toggler border-0 text-light" type="button"
@@ -127,7 +127,7 @@
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav mx-auto gap-3 small">
                 <li class="nav-item">
-                    <a class="nav-link text-light" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link text-light" href="{% url 'base' %}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light" href="{% url 'home' %}">Import</a>
@@ -146,7 +146,7 @@
             <!-- Right side -->
             <div class="d-flex align-items-center gap-2">
                 {% if user.is_authenticated %}
-                    <span class="small text-muted me-2">
+                    <span class="small text-light me-2">
                         {{ user.username }}
                     </span>
                     <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-light">

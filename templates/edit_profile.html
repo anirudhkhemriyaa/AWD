@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile | MyApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-semibold text-light mb-1">Edit Profile</h2>
+            <p class="text-secondary small mb-0">
+                Update your company information
+            </p>
+        </div>
+        <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
+            Back to Profile
+        </a>
+    </div>
+
+    <div class="card p-4">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-3 text-light">
+
+                <div class="col-md-6">
+                    <label class="form-label small">Company Name</label>
+                    <input type="text" class="form-control" name="Name_of_Company"
+                           value="{{ profile.Name_of_Company }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small">Person in Charge</label>
+                    <input type="text" class="form-control" name="Name_of_Encharge"
+                           value="{{ profile.Name_of_Encharge }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small">Sector</label>
+                    <input type="text" class="form-control" name="Sector"
+                           value="{{ profile.Sector }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small">Company Size</label>
+                    <select class="form-select" name="company_size">
+                        {% for value,label in profile.COMPANY_SIZE_CHOICES %}
+                            <option value="{{ value }}" {% if profile.company_size == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small">Phone</label>
+                    <input type="text" class="form-control" name="phone"
+                           value="{{ profile.phone }}">
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-accent btn-sm">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

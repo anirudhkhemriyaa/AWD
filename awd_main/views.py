@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import auth
 from Data_entry.models import CustomUser
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -75,3 +77,22 @@ def profile(request):
     }
     return render(request , "profile.html" , context)
 
+
+#======================== Edit profile =======================
+
+@login_required
+def profile_edit(request):
+    profile = request.user
+
+    if request.method == "POST":
+        profile.Name_of_Company = request.POST.get("Name_of_Company")
+        profile.Name_of_Encharge = request.POST.get("Name_of_Encharge")
+        profile.Sector = request.POST.get("Sector")
+        profile.company_size = request.POST.get("company_size")
+        profile.phone = request.POST.get("phone")
+        profile.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect("profile")
+
+    return render(request, "edit_profile.html", {"profile": profile})

@@ -42,7 +42,6 @@ def home(request):
         history = History.objects.create(
             company=request.user,
             work="Import",
-            action=f"Started import into {model_name}",
             data=file_path.name,
             status="processing"
         )

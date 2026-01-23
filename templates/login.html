@@ -1,72 +1,128 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-
 {% block title %}Login | MyApp{% endblock %}
 
 {% block content %}
 
-<div class="container">
+<style>
+/* Dark input theme */
+.form-control,
+.form-select {
+    background-color: #111 !important;
+    color: #f8f9fa !important;
+    border: 1px solid #444 !important;
+}
+
+/* Placeholder text */
+.form-control::placeholder {
+    color: #888 !important;
+}
+
+/* Focus state */
+.form-control:focus,
+.form-select:focus {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #0dcaf0 !important;
+    box-shadow: 0 0 0 0.15rem rgba(13, 202, 240, 0.25) !important;
+}
+
+/* Labels */
+.form-label {
+    color: #adb5bd !important;
+}
+
+/* Invalid fields */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+</style>
+
+
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-5">
+        <div class="col-lg-8 col-md-10">
 
-            <div class="card bg-dark border border-secondary rounded-4 mt-5">
-                <div class="card-body p-4">
+            <div class="card bg-dark border border-secondary rounded-4 shadow">
+                <div class="card-body p-5">
 
-                    <div class="text-center mb-4">
-                        <h2 class="fw-semibold text-light">Welcome Back</h2>
-                        <p class="text-secondary small">
-                            Sign in to continue
-                        </p>
-                    </div>
+                    <div class="row align-items-center">
 
-                    <form action="{% url 'login' %}" method="POST">
-                        {% csrf_token %}
+                        <!-- LEFT INFO PANEL -->
+                        <div class="col-md-5 d-none d-md-block border-end border-secondary pe-4">
+                            <h4 class="text-light fw-semibold">MyApp</h4>
+                            <p class="text-secondary small mt-2">
+                                Your workspace for focused productivity.
+                            </p>
 
-                        <div class="text-light">
-                            {{ form|crispy }}
+                            <ul class="list-unstyled small text-secondary mt-4">
+                                <li class="mb-2">✔ Secure authentication</li>
+                                <li class="mb-2">✔ Personal dashboard</li>
+                                <li class="mb-2">✔ Access anywhere</li>
+                            </ul>
+
+                            <p class="text-secondary small mt-4">
+                                Sign in to continue where you left off.
+                            </p>
                         </div>
 
-                        <button
-                            type="submit"
-                            class="btn btn-info text-dark w-100 fw-medium mt-3"
-                        >
-                            Login
-                        </button>
+                        <!-- RIGHT FORM PANEL -->
+                        <div class="col-md-7 ps-md-5">
+                            <div class="text-center mb-4">
+                                <h2 class="fw-semibold text-light">Welcome Back</h2>
+                                <p class="text-secondary small mb-0">
+                                    Sign in to continue
+                                </p>
+                            </div>
 
-                        <!-- 🔴 MESSAGE SECTION (CONTEXTUAL, BELOW BUTTON) -->
-                        {% if messages %}
-                        <div class="mt-3">
-                            {% for message in messages %}
-                                <div
-                                    class="alert bg-black text-white border border-secondary alert-dismissible fade show"
-                                    role="alert"
-                                >
-                                    {{ message }}
-                                    <button
-                                        type="button"
-                                        class="btn-close btn-close-white"
-                                        data-bs-dismiss="alert"
-                                    ></button>
+                            <form action="{% url 'login' %}" method="POST">
+                                {% csrf_token %}
+
+                                <div class="text-light">
+                                    {{ form|crispy }}
                                 </div>
-                            {% endfor %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-info text-dark w-100 fw-medium mt-3"
+                                >
+                                    Login
+                                </button>
+
+                                {% if messages %}
+                                <div class="mt-3">
+                                    {% for message in messages %}
+                                        <div
+                                            class="alert bg-black text-white border border-secondary alert-dismissible fade show"
+                                            role="alert"
+                                        >
+                                            {{ message }}
+                                            <button
+                                                type="button"
+                                                class="btn-close btn-close-white"
+                                                data-bs-dismiss="alert"
+                                            ></button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                                <div class="text-center mt-4">
+                                    <span class="text-secondary small">
+                                        Don’t have an account?
+                                    </span>
+                                    <a
+                                        href="{% url 'register' %}"
+                                        class="text-info text-decoration-none fw-medium ms-1"
+                                    >
+                                        Register
+                                    </a>
+                                </div>
+
+                            </form>
                         </div>
-                    {% endif %}
 
-
-
-                        <div class="text-center mt-4">
-                            <span class="text-secondary small">
-                                Don’t have an account?
-                            </span>
-                            <a
-                                href="{% url 'register' %}"
-                                class="text-info text-decoration-none fw-medium ms-1"
-                            >
-                                Register
-                            </a>
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
             </div>

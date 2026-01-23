@@ -56,4 +56,67 @@
     </div>
 </div>
 
+<!-- Example Format Preview -->
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+
+        <div class="card bg-dark border border-secondary rounded-4">
+            <div class="card-body p-4">
+
+                <h5 class="text-light mb-2">Example Export Format</h5>
+                <p class="text-secondary small mb-4">
+                    Below is how the CSV will look for the <span class="text-info">Employee</span> model.
+                </p>
+
+                <div class="table-responsive">
+    <table class="table table-dark table-bordered small align-middle">
+        <thead class="table-secondary text-dark">
+            <tr>
+                <th>id</th>
+                <th>first_name</th>
+                <th>last_name</th>
+                <th>email</th>
+                <th>phone</th>
+                <th>department</th>
+                <th>joined_date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john@company.com</td>
+                <td>9876543210</td>
+                <td>Sales</td>
+                <td>2024-01-15</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Jane</td>
+                <td>Smith</td>
+                <td>jane@company.com</td>
+                <td>9123456789</td>
+                <td>HR</td>
+                <td>2023-11-02</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+                <p class="text-secondary small mt-3 mb-0">
+                    Column names match the model fields.  
+                    Dates use <strong>YYYY-MM-DD</strong> format.
+                </p>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
 {% endblock %}

@@ -27,7 +27,6 @@ def import_data_task(self, complete_path, model_name, history_id):
     except Exception as e:
         History.objects.filter(id=history_id).update(
             status="failed",
-            action=str(e)
         )
 
         mail_subject = 'Data Import Failed'

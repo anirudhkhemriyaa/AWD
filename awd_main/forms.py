@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from Data_entry.models import CustomUser
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
@@ -14,26 +14,24 @@ class RegistrationForm(UserCreationForm):
     )
 
     class Meta:
-        model = User
-        fields = ("email", "username", "password1", "password2")
+        model = CustomUser
+        fields = (
+            "Name_of_Company",
+            "Name_of_Encharge",
+            "phone",
+            "Sector",
+            "company_size",
+            "email",
+            "username",
+            "password1",
+            "password2",
+        )
 
         widgets = {
             "username": forms.TextInput(
                 attrs={
                     "class": "form-control bg-light text-dark border-secondary",
                     "placeholder": "Username"
-                }
-            ),
-            "password1": forms.PasswordInput(
-                attrs={
-                    "class": "form-control bg-light text-dark border-secondary",
-                    "placeholder": "Password"
-                }
-            ),
-            "password2": forms.PasswordInput(
-                attrs={
-                    "class": "form-control bg-light text-dark border-secondary",
-                    "placeholder": "Confirm password"
                 }
             ),
         }

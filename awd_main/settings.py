@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+
     'Data_entry',
     'uploads',
     'crispy_forms',
@@ -34,6 +36,7 @@ INSTALLED_APPS = [
     'Email',
     'ckeditor',
     'anymail',
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -168,3 +171,5 @@ ANYMAIL = {
 CSRF_TRUSTED_ORIGINS = ['https://doretha-tuberoid-alec.ngrok-free.dev']
 BASE_URL = 'https://doretha-tuberoid-alec.ngrok-free.dev'
 
+
+AUTH_USER_MODEL = "Data_entry.CustomUser"

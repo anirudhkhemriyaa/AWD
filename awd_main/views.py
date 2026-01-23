@@ -4,7 +4,9 @@ from .forms import RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import auth
-from django.contrib.auth.models import User
+from Data_entry.models import CustomUser
+
+
 
 #============= Landing page ===========
 
@@ -66,7 +68,7 @@ def logout(request):
 
 #========================= Profile view =======================
 def profile(request):
-    user = User.objects.get(username=request.user.username)
+    user = CustomUser.objects.get(username=request.user.username)
     context={
-        'user':user,}
+        'profile':user,}
     return render(request , "profile.html" , context)

@@ -1,12 +1,11 @@
 from awd_main.celery import app
 from Data_entry.utils import send_email_notification
-
+from Data_entry.models import History
 
 #==================Email task =========================
 
 @app.task(bind=True)
 def send_email_task(self, mail_subject, msg, to_email, attachment, email_id, history_id):
-    from .models import History
 
     try:
         send_email_notification(mail_subject, msg, to_email, attachment, email_id)

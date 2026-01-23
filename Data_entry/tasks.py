@@ -3,37 +3,40 @@ from django.core.management import call_command
 from django.conf import settings
 from .utils import send_email_notification
 from Data_entry.utils import generate_csv_file
+from Data_entry.models import  History
+from Email.models import List
 
 #========================== Importing task in background ==================
-
 @app.task(bind=True)
-def import_data_task(self, complete_path, model_name, history_id):
-    from .models import History
+def import_data_task(self, complete_path, model_name, history_id, list_id=None):
 
+    model_name = model_name.lower()
     try:
-        call_command('import', complete_path, model_name)
+        email_list = None
+        if model_name == "subscriber":
+            if not list_id:
+                raise ValueError("Subscriber list is required.")
+            email_list = List.objects.get(id=list_id)
 
-        History.objects.filter(id=history_id).update(
-            status="success",
-        )
+        call_command('import', complete_path, model_name, list_id=email_list.id if email_list else None)
+
+        History.objects.filter(id=history_id).update(status="success")
 
         mail_subject = 'Data Import Completed'
-        message = f'The data import for model {model_name} has been completed successfully.'
-        to_email = settings.DEFAULT_TO_EMAIL
-        send_email_notification(mail_subject, message, [to_email])
+        message = f'Data import for model {model_name} completed successfully.'
+        send_email_notification(mail_subject, message, [settings.DEFAULT_TO_EMAIL])
 
         return 'Data imported successfully'
 
     except Exception as e:
-        History.objects.filter(id=history_id).update(
-            status="failed",
-        )
+        History.objects.filter(id=history_id).update(status="failed")
 
         mail_subject = 'Data Import Failed'
         message = f'Import failed for model {model_name}.\n\nError: {str(e)}'
         send_email_notification(mail_subject, message, [settings.DEFAULT_TO_EMAIL])
 
         raise
+
 
 
 #========================== Exporting task in background ==================

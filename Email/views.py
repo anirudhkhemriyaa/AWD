@@ -31,7 +31,6 @@ def send_email(request):
             history = History.objects.create(
             company=request.user,
             work="Email_Send",
-            action=f"Started email campaign: {mail_subject}",
             data=f"{len(to_email)} recipients",
             status="processing"
             )

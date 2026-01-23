@@ -4,26 +4,41 @@ from django.db import DataError
 from django.apps import apps
 import csv
 from Data_entry.utils import check_csv_error
+from Email.models import List
 
 
 
 #=========================Import Command giving data to db===========================
 
 class Command(BaseCommand):
-    help = "You can upload csv file with relatable data and data is inserted automatically"
+    help = "Import CSV data into selected model"
 
     def add_arguments(self, parser):
-        parser.add_argument('file_path' , type=str , help="Path to file")
-        parser.add_argument('model_name' , type=str , help="Enter model name")
+        parser.add_argument('file_path', type=str)
+        parser.add_argument('model_name', type=str)
+        parser.add_argument('--list_id', type=int, default=None)
+    
 
+    def handle(self, *args, **options):
+        file_path = options['file_path']
+        model_name = options['model_name'].lower()
+        list_id = options.get('list_id')
 
-    def handle(self , *args, **kwargs):
-        file_path = kwargs['file_path']
-        model_name = kwargs['model_name'].capitalize()
+        model = check_csv_error(file_path, model_name)
 
-        model = check_csv_error(file_path , model_name)
-        with open(file_path,'r') as file:
+        email_list = None
+        if model_name == "subscriber":
+            if not list_id:
+                raise CommandError("Subscriber import requires --list_id")
+            email_list = List.objects.get(id=list_id)
+
+        with open(file_path, 'r', encoding='utf-8-sig', errors='ignore') as file:
             reader = csv.DictReader(file)
-            for row in reader:  
+
+            for row in reader:
+                if model_name == "subscriber":
+                    row["email_list"] = email_list  # inject FK
+
                 model.objects.create(**row)
-        self.stdout.write(self.style.SUCCESS('Your file data is inserted'))
+
+        self.stdout.write(self.style.SUCCESS("Your file data is inserted"))

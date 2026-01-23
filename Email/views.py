@@ -2,55 +2,62 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from .forms import Email_form
 from django.contrib import messages
-from Data_entry.utils import send_email_notification
-from django.conf import settings
 from .models import EmailTracking, Sent, Subscriber
 from .tasks import send_email_task
 from .models import Email
 from django.db.models import Sum
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from Data_entry.models import History
 # Create your views here.
 
 #=============================Send bulk email view===================
+@login_required(login_url="login")
 def send_email(request):
     if request.method == "POST":
-        form = Email_form(request.POST , request.FILES)
+        form = Email_form(request.POST, request.FILES)
         if form.is_valid():
             email = form.save()
-            mail_subject = request.POST.get('subject')
-            msg = request.POST.get('body')
-            email_list = request.POST.get('email_list')
-            email_list = email.email_list 
 
-            # Extract email address from subscriber model
+            mail_subject = email.subject
+            msg = email.body
+            email_list = email.email_list
+
             subscribers = Subscriber.objects.filter(email_list=email_list)
-            to_email=[email.email_address for email in subscribers ]
+            to_email = [s.email_address for s in subscribers]
 
-            if email.attachment:
-                attachment = email.attachment.path
-            else:
-                attachment=None
+            attachment = email.attachment.path if email.attachment else None
 
-            email_id = email.id
+            history = History.objects.create(
+            company=request.user,
+            work="Email_Send",
+            action=f"Started email campaign: {mail_subject}",
+            data=f"{len(to_email)} recipients",
+            status="processing"
+            )
 
-            send_email_task.delay(mail_subject , msg , to_email , attachment , email_id)
+            send_email_task.delay(
+                mail_subject,
+                msg,
+                to_email,
+                attachment,
+                email.id,
+                history.id
+            )
 
-            messages.success(request , 'Email sent successfully')
+
+            messages.success(request, 'Emails are being sent')
             return redirect('send_email')
 
-    else:
-        form = Email_form()
-        context = {
-            'form':form
-        }
-    return render(request , 'emails/send_email.html' , context)
+    form = Email_form()
+    return render(request, 'emails/send_email.html', {'form': form})
 
 
 
 
 
 
-
+@login_required(login_url="login")
 def track_open(request, unique_id):
     print("tracking open...")
     try:

@@ -3,54 +3,101 @@
 {% block title %}Profile | MyApp{% endblock %}
 
 {% block content %}
+<div class="container py-5">
 
-<div class="container">
-<div class="d-flex justify-content-end gap-2">
-    <a href="{% url 'base' %}" class="btn btn-outline-light btn-sm">
-        Dashboard
-    </a>
-</div>
-
-    <div class="text-center mb-5">
-        <h2 class="fw-semibold text-light">Profile</h2>
-        <p class="text-secondary small">
-            Account information
-        </p>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-semibold text-light mb-1">Company Profile</h2>
+            <p class="text-secondary small mb-0">
+                Account & business information
+            </p>
+        </div>
+        <a href="{% url 'base' %}" class="btn btn-outline-light btn-sm">
+            Dashboard
+        </a>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <div class="row g-4">
 
-            <div class="card bg-dark border border-secondary rounded-4">
+        <!-- Account Card -->
+        <div class="col-md-5">
+            <div class="card bg-dark border-secondary rounded-4 h-100">
                 <div class="card-body p-4">
 
-                    <!-- Username -->
-                    <div class="mb-4">
-                        <div class="text-secondary small">
-                            Username
-                        </div>
+                    <h5 class="text-light mb-4">Account</h5>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small">Username</div>
                         <div class="fw-medium text-white">
                             {{ request.user.username }}
                         </div>
                     </div>
 
-                    <!-- Email -->
-                    <div class="mb-4">
-                        <div class="text-secondary small">
-                            Email
-                        </div>
+                    <div class="mb-3">
+                        <div class="text-secondary small">Email</div>
                         <div class="fw-medium text-white">
                             {{ request.user.email }}
                         </div>
                     </div>
 
-                    <hr class="border-secondary">
+                     <div class="col-md-6">
+                        <div class="text-secondary small">Phone</div>
+                        <div class="fw-medium text-white">
+                            {{ profile.phone }}
+                        </div>
+                    </div>
 
-                    <!-- Actions (future-safe) -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Card -->
+        <div class="col-md-7">
+            <div class="card bg-dark border-secondary rounded-4 h-100">
+                <div class="card-body p-4">
+
+                    <h5 class="text-light mb-4">Company</h5>
+
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <div class="text-secondary small">Company Name</div>
+                            <div class="fw-medium text-white">
+                                {{ profile.Name_of_Company }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-secondary small">Person in Charge</div>
+                            <div class="fw-medium text-white">
+                                {{ profile.Name_of_Encharge }}
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="text-secondary small">Sector</div>
+                            <div class="fw-medium text-white">
+                                {{ profile.Sector }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-secondary small">Company Size</div>
+                            <div class="fw-medium text-white">
+                                {{ profile.get_company_size_display }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="#" class="btn btn-outline-light btn-sm">
-                            Edit Profile
-                        </a>
+                        {% comment %} <a href="{% url 'profile_edit' %}" class="btn btn-outline-light btn-sm">
+                            Edit
+                        </a> {% endcomment %}
                         <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">
                             Logout
                         </a>
@@ -58,10 +105,61 @@
 
                 </div>
             </div>
-
         </div>
+
     </div>
 
 </div>
+
+<<hr class="border-secondary my-4">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="text-light mb-0">Recent Activity</h5>
+    <span class="text-secondary small">Last 20 actions</span>
+</div>
+
+<div class="table-responsive rounded-4 overflow-hidden">
+    <table class="table table-dark table-borderless table-hover align-middle mb-0">
+        <thead class="bg-secondary text-dark small">
+            <tr>
+                <th class="ps-4">Tool</th>
+                <th>Info</th>
+                <th class="text-center">Status</th>
+                <th class="text-end pe-4">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for h in histories %}
+            <tr class="border-bottom border-secondary">
+                <td class="ps-4 fw-semibold text-white">
+                    {{ h.work }}
+                </td>
+
+                <td class="text-secondary">
+                    {{ h.data|default:"—" }}
+                </td>
+
+                <td class="text-center">
+                    {% if h.status == "success" %}
+                        <span class="badge rounded-pill bg-success px-3">Success</span>
+                    {% elif h.status == "failed" %}
+                        <span class="badge rounded-pill bg-danger px-3">Failed</span>
+                    {% else %}
+                        <span class="badge rounded-pill bg-warning text-dark px-3">Processing</span>
+                    {% endif %}
+                </td>
+
+                <td class="text-end pe-4 text-secondary">
+                    {{ h.created_at|date:"M d, Y • H:i" }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4" class="text-center text-secondary py-4">
+                    No activity yet.
+                </td>
+            </tr>
+        {% endfor%}%
+
 
 {% endblock %}

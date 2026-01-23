@@ -1,5 +1,4 @@
 from django.shortcuts import render , redirect
-from django.http import HttpResponse
 from .forms import RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -69,6 +68,10 @@ def logout(request):
 #========================= Profile view =======================
 def profile(request):
     user = CustomUser.objects.get(username=request.user.username)
+    histories = request.user.histories.order_by('-created_at')[:20]
     context={
-        'profile':user,}
+        'profile':user,
+        "histories": histories,
+    }
     return render(request , "profile.html" , context)
+

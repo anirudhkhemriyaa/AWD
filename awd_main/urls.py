@@ -9,7 +9,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('data_entry/' , include('Data_entry.urls')),
     path('Email/' , include('Email.urls')),
-    path('celery-test/' ,views.celery_test),
     path('' ,views.Base , name="base"),
     path('register' ,views.register , name="register"),
     path('login' ,views.login , name="login"),

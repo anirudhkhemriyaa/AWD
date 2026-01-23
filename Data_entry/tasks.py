@@ -8,21 +8,7 @@ from .utils import send_email_notification
 from Data_entry.utils import generate_csv_file
 
 
-
-#============================test task ===========================
-@app.task
-def celery_test_task():
-    time.sleep(5)
-    # Send an email
-    mail_subject = 'Celery Task Completed'
-    message = 'The Celery task has been executed successfully.' 
-    to_email = settings.DEFAULT_TO_EMAIL
-    send_email_notification(mail_subject , message , to_email)
-    return f"Email Send =>> {{to_mail}} "
-
-
-
-#==========================importing task in background==================
+#========================== Importing task in background ==================
 
 @app.task
 def import_data_task(complete_path , model_name):
@@ -37,7 +23,7 @@ def import_data_task(complete_path , model_name):
     
     return 'Data imported successfully'
 
-#==========================Exporting task in background==================
+#========================== Exporting task in background ==================
 
 @app.task
 def export_data_task(model_name):

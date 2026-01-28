@@ -21,6 +21,7 @@ class CustomUser(AbstractUser):
 
 
 
+
 class Student(models.Model):
     Roll_no = models.CharField(max_length=10)
     name = models.CharField(max_length=20)

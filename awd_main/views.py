@@ -7,8 +7,6 @@ from Data_entry.models import CustomUser
 from django.contrib.auth.decorators import login_required
 
 
-
-
 #============= Landing page ===========
 
 def Base(request):

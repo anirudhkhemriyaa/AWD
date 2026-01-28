@@ -90,7 +90,6 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
                 base = settings.BASE_URL
                 click_tracking_url = f"{base}/Email/track/click/{unique_id}"
                 open_tracking_url = f"{base}/Email/track/open/{unique_id}"
-                print(f'open link >> {open_tracking_url}')
                 #------------search for link in msg-------
                 soap = BeautifulSoup(message , 'html.parser')
                 urls = [ a['href'] for a in soap.find_all('a' , href=True)]
@@ -99,8 +98,6 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
                     for url in urls:
                         tracked_url = f"{click_tracking_url}?url={url}"
                         new_message = new_message.replace(f"{url}" , f"{tracked_url}")
-                else:
-                    print("No links found in the email message.")
 
                 open_tracking_image=f"<img src='{open_tracking_url}' width='1' height='1'>"
                 new_message += open_tracking_image

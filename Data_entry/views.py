@@ -7,7 +7,6 @@ from django.contrib import messages
 from .tasks import import_data_task , export_data_task
 from django.contrib.auth.decorators import login_required
 from .models import History
-
 # Create your views here.
 
 #======================it is a importing view named as home ==========================

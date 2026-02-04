@@ -84,7 +84,7 @@ def export(request):
             status="processing"
         )
 
-        export_data_task.delay(model_name, history.id)
+        export_data_task.delay(request.user.id,model_name, history.id)
 
         messages.success(request, 'Your data is in processing, you will be notified')
         return redirect('export')

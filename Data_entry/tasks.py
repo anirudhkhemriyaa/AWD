@@ -5,12 +5,23 @@ from .utils import send_email_notification
 from Data_entry.utils import generate_csv_file
 from Data_entry.models import  History
 from Email.models import List
+from django.utils import timezone
+from django.core.exceptions import PermissionDenied
+from redis import Redis
+from .models import UserSubscription , CustomUser
+from .limit import enforce_export_limit,enforce_import_limit, record_usage
+
 
 #========================== Importing task in background ==================
 @app.task(bind=True)
-def import_data_task(self, complete_path, model_name, history_id, list_id=None):
+def import_data_task(self, user_id, complete_path, model_name, history_id, list_id=None):
+
+    user = CustomUser.objects.get(id=user_id)
+
+    enforce_import_limit(user)
 
     model_name = model_name.lower()
+
     try:
         email_list = None
         if model_name == "subscriber":
@@ -22,50 +33,55 @@ def import_data_task(self, complete_path, model_name, history_id, list_id=None):
 
         History.objects.filter(id=history_id).update(status="success")
 
-        mail_subject = 'Data Import Completed'
-        message = f'Data import for model {model_name} completed successfully.'
-        send_email_notification(mail_subject, message, [settings.DEFAULT_TO_EMAIL])
+        send_email_notification(
+            'Data Import Completed',
+            f'Data import for model {model_name} completed successfully.',
+            [settings.DEFAULT_TO_EMAIL]
+        )
+        record_usage(user, "imports_done")
 
         return 'Data imported successfully'
 
     except Exception as e:
         History.objects.filter(id=history_id).update(status="failed")
 
-        mail_subject = 'Data Import Failed'
-        message = f'Import failed for model {model_name}.\n\nError: {str(e)}'
-        send_email_notification(mail_subject, message, [settings.DEFAULT_TO_EMAIL])
+        send_email_notification(
+            'Data Import Failed',
+            f'Import failed for model {model_name}.\n\nError: {str(e)}',
+            [settings.DEFAULT_TO_EMAIL]
+        )
 
         raise
 
 
 
 #========================== Exporting task in background ==================
-
 @app.task(bind=True)
-def export_data_task(self, model_name, history_id):
-    from .models import History
+def export_data_task(self, user_id, model_name, history_id):
+
+
+    user = CustomUser.objects.get(id=user_id)
+
+    enforce_export_limit(user) 
 
     try:
         call_command('export', model_name)
 
         file_path = generate_csv_file(model_name)
 
-
         History.objects.filter(id=history_id).update(
             status="success",
             data=file_path
         )
 
-        mail_subject = 'Data Export Completed'
-        message = f'The data export for model {model_name} has been completed successfully.'
-        to_email = settings.DEFAULT_TO_EMAIL
         send_email_notification(
-            mail_subject,
-            message,
-            [to_email],
+            'Data Export Completed',
+            f'The data export for model {model_name} has been completed successfully.',
+            [settings.DEFAULT_TO_EMAIL],
             attachment=file_path
         )
-
+        record_usage(user, "exports_done")
+        
         return 'Data exported successfully'
 
     except Exception as e:
@@ -74,8 +90,9 @@ def export_data_task(self, model_name, history_id):
             action=str(e)
         )
 
-        mail_subject = 'Data Export Failed'
-        message = f'Export failed for model {model_name}.\n\nError: {str(e)}'
-        send_email_notification(mail_subject, message, [settings.DEFAULT_TO_EMAIL])
-
+        send_email_notification(
+            'Data Export Failed',
+            f'Export failed for model {model_name}.\n\nError: {str(e)}',
+            [settings.DEFAULT_TO_EMAIL]
+        )
         raise

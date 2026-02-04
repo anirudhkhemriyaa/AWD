@@ -52,7 +52,7 @@ def check_csv_error(file_path, model_name):
         reader = csv.DictReader(file)
         csv_fields = set(reader.fieldnames)
 
-    # strict but correct
+
     required = REQUIRED_FROM_CSV.get(model_name.lower(), model_fields)
 
     if not required.issubset(csv_fields):

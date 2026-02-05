@@ -1,6 +1,9 @@
+from datetime import timedelta
 import os
 
 from celery import Celery
+from celery import shared_task
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'awd_main.settings')
 

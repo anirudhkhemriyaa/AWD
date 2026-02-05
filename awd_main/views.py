@@ -1,8 +1,7 @@
 from django.shortcuts import render , redirect
 from .forms import RegistrationForm
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import auth
 from Data_entry.models import CustomUser
 from django.contrib.auth.decorators import login_required
 
@@ -20,7 +19,7 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request , "Registration successful.")
-            return redirect('profile')
+            return redirect('login')
         else:
             messages.error(request , "Registration failed. Invalid information.")
             return redirect('register')

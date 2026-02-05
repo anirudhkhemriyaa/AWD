@@ -1,182 +1,227 @@
-{% extends "layout.html" %}
-{% block title %}Dashboard | AWM{% endblock %}
-
-{% block content %}
+{% extends "layout.html" %} {% block title %}Dashboard | AWM{% endblock %} {%
+block content %}
 
 <style>
-    /* GLOBAL DARK THEME FIX */
-body {
+  /* GLOBAL DARK THEME FIX */
+  body {
     color: #e5e7eb; /* light gray, not pure white */
-}
+  }
 
-.card {
+  .card {
     background-color: #121212 !important;
     color: #e5e7eb !important;
-}
+  }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: #f9fafb;
-}
+  }
 
-/* Paragraphs & small text */
-p, .text-secondary, .small {
+  /* Paragraphs & small text */
+  p,
+  .text-secondary,
+  .small {
     color: #9ca3af !important;
-}
+  }
 
-/* Buttons */
-.btn-outline-info {
+  /* Buttons */
+  .btn-outline-info {
     color: #0dcaf0;
     border-color: #0dcaf0;
-}
+  }
 
-/* Tables */
-.table-dark td,
-.table-dark th {
+  /* Tables */
+  .table-dark td,
+  .table-dark th {
     color: #e5e7eb;
-}
+  }
 </style>
 
 <!-- HERO -->
 <div class="row mb-5">
-    <div class="col text-center">
-        <h1 class="fw-bold display-6 mb-2">AWM Control Center</h1>
-        <p class="text-secondary lead width-75 mx-auto">
-            Centralize data pipelines, communication, and performance tracking from one command hub.
-        </p>
-    </div>
+  <div class="col text-center">
+    <h1 class="fw-bold display-6 mb-2">AWM Control Center</h1>
+    <p class="text-secondary lead width-75 mx-auto">
+      Centralize data pipelines, communication, and performance tracking from
+      one command hub.
+    </p>
+  </div>
 </div>
 
 <!-- ACTION GRID -->
 <div class="row g-4 mb-5">
-
-    <div class="col-md-6">
-        <div class="card p-4 h-100 border-start border-info border-3">
-            <h5>Data Import</h5>
-            <p class="text-secondary small">
-                Ingest structured CSV data into your system models.
-            </p>
-            <ul class="small text-secondary mb-3">
-                <li>Schema validation</li>
-                <li>Error detection</li>
-                <li>Batch processing</li>
-            </ul>
-            <a href="{% url 'home' %}" class="btn btn-outline-info w-100">
-                Start Import
-            </a>
-        </div>
+  <div class="col-md-6">
+    <div class="card p-4 h-100 border-start border-info border-3">
+      <h5>Data Import</h5>
+      <p class="text-secondary small">
+        Ingest structured CSV data into your system models.
+      </p>
+      <ul class="small text-secondary mb-3">
+        <li>Schema validation</li>
+        <li>Error detection</li>
+        <li>Batch processing</li>
+      </ul>
+      <a href="{% url 'home' %}" class="btn btn-outline-info w-100">
+        Start Import
+      </a>
     </div>
+  </div>
 
-    <div class="col-md-6">
-        <div class="card p-4 h-100 border-start border-info border-3">
-            <h5>Data Export</h5>
-            <p class="text-secondary small">
-                Generate filtered datasets for reporting or archiving.
-            </p>
-            <ul class="small text-secondary mb-3">
-                <li>CSV & Excel</li>
-                <li>Time filters</li>
-                <li>Audit-safe</li>
-            </ul>
-            <a href="{% url 'export' %}" class="btn btn-outline-info w-100">
-                Export Data
-            </a>
-        </div>
+  <div class="col-md-6">
+    <div class="card p-4 h-100 border-start border-info border-3">
+      <h5>Data Export</h5>
+      <p class="text-secondary small">
+        Generate filtered datasets for reporting or archiving.
+      </p>
+      <ul class="small text-secondary mb-3">
+        <li>CSV & Excel</li>
+        <li>Time filters</li>
+        <li>Audit-safe</li>
+      </ul>
+      <a href="{% url 'export' %}" class="btn btn-outline-info w-100">
+        Export Data
+      </a>
     </div>
+  </div>
 
-    <div class="col-md-6">
-        <div class="card p-4 h-100 border-start border-info border-3">
-            <h5>Bulk Email Engine</h5>
-            <p class="text-secondary small">
-                Send campaigns at scale with tracking and logs.
-            </p>
-            <ul class="small text-secondary mb-3">
-                <li>Template support</li>
-                <li>Open tracking</li>
-                <li>Bounce logging</li>
-            </ul>
-            <a href="{% url 'send_email' %}" class="btn btn-outline-info w-100">
-                Launch Campaign
-            </a>
-        </div>
+  <div class="col-md-6">
+    <div class="card p-4 h-100 border-start border-info border-3">
+      <h5>Bulk Email Engine</h5>
+      <p class="text-secondary small">
+        Send campaigns at scale with tracking and logs.
+      </p>
+      <ul class="small text-secondary mb-3">
+        <li>Template support</li>
+        <li>Open tracking</li>
+        <li>Bounce logging</li>
+      </ul>
+      <a href="{% url 'send_email' %}" class="btn btn-outline-info w-100">
+        Launch Campaign
+      </a>
     </div>
+  </div>
 
-    <div class="col-md-6">
-        <div class="card p-4 h-100 border-start border-info border-3">
-            <h5>Email Intelligence</h5>
-            <p class="text-secondary small">
-                Analyze engagement and optimize delivery.
-            </p>
-            <ul class="small text-secondary mb-3">
-                <li>Open rates</li>
-                <li>Click tracking</li>
-                <li>Campaign history</li>
-            </ul>
-            <a href="{% url 'track_dashboard' %}" class="btn btn-outline-info w-100">
-                View Insights
-            </a>
-        </div>
+  <div class="col-md-6">
+    <div class="card p-4 h-100 border-start border-info border-3">
+      <h5>Email Intelligence</h5>
+      <p class="text-secondary small">
+        Analyze engagement and optimize delivery.
+      </p>
+      <ul class="small text-secondary mb-3">
+        <li>Open rates</li>
+        <li>Click tracking</li>
+        <li>Campaign history</li>
+      </ul>
+      <a href="{% url 'track_dashboard' %}" class="btn btn-outline-info w-100">
+        View Insights
+      </a>
     </div>
-
+  </div>
 </div>
 
 <!-- DATA CONTRACT SECTION -->
 <div class="card p-4">
-    <h4 class="mb-2 text-info">Data Contracts</h4>
-    <p class="text-secondary small mb-4">
-        These schemas define the only accepted formats. Any mismatch will be rejected.
-    </p>
+  <h4 class="mb-2 text-info">Data Contracts</h4>
+  <p class="text-secondary small mb-4">
+    These schemas define the only accepted formats. Any mismatch will be
+    rejected.
+  </p>
 
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#student">Student</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#customer">Customer</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#employee">Employee</button>
-        </li>
-    </ul>
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <button
+        class="nav-link active"
+        data-bs-toggle="tab"
+        data-bs-target="#student"
+      >
+        Student
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#customer">
+        Customer
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#employee">
+        Employee
+      </button>
+    </li>
+  </ul>
 
-    <div class="tab-content">
-
-        <div class="tab-pane fade show active" id="student">
-            <table class="table table-dark table-bordered small text-center">
-                <thead><tr><th>Roll_no</th><th>name</th><th>age</th></tr></thead>
-                <tbody><tr><td>S001</td><td>John</td><td>21</td></tr></tbody>
-            </table>
-        </div>
-
-        <div class="tab-pane fade" id="customer">
-            <table class="table table-dark table-bordered small text-center">
-                <thead><tr><th>country</th><th>country_code</th></tr></thead>
-                <tbody><tr><td>India</td><td>91</td></tr></tbody>
-            </table>
-        </div>
-
-        <div class="tab-pane fade" id="employee">
-            <div class="table-responsive">
-                <table class="table table-dark table-bordered small text-center">
-                    <thead>
-                        <tr>
-                            <th>employee_id</th><th>employee_name</th><th>designation</th>
-                            <th>salary</th><th>retirement</th><th>other_benefits</th>
-                            <th>total_benefits</th><th>total_compensation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>101</td><td>Alice</td><td>Manager</td>
-                            <td>50000</td><td>5000</td><td>2000</td>
-                            <td>7000</td><td>57000</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="student">
+      <table class="table table-dark table-bordered small text-center">
+        <thead>
+          <tr>
+            <th>Roll_no</th>
+            <th>name</th>
+            <th>age</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>S001</td>
+            <td>John</td>
+            <td>21</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <div class="tab-pane fade" id="customer">
+      <table class="table table-dark table-bordered small text-center">
+        <thead>
+          <tr>
+            <th>country</th>
+            <th>country_code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>India</td>
+            <td>91</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="employee">
+      <div class="table-responsive">
+        <table class="table table-dark table-bordered small text-center">
+          <thead>
+            <tr>
+              <th>employee_id</th>
+              <th>employee_name</th>
+              <th>designation</th>
+              <th>salary</th>
+              <th>retirement</th>
+              <th>other_benefits</th>
+              <th>total_benefits</th>
+              <th>total_compensation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>101</td>
+              <td>Alice</td>
+              <td>Manager</td>
+              <td>50000</td>
+              <td>5000</td>
+              <td>2000</td>
+              <td>7000</td>
+              <td>57000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

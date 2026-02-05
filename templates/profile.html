@@ -1,146 +1,140 @@
-{% extends "base.html" %}
-{% block title %}Profile | MyApp{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Profile | MyApp{% endblock %} {%
+block content %}
 <div class="container py-5">
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
+    <div>
+      <h2 class="fw-semibold text-light mb-1">Company Profile</h2>
+      <p class="text-secondary small mb-0">Account & business information</p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      <a href="{% url 'base' %}" class="btn btn-outline-light btn-sm">
+        Dashboard
+      </a>
+      <a href="{% url 'profile_edit' %}" class="btn btn-outline-info btn-sm">
+        Edit Profile
+      </a>
 
-    <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="fw-semibold text-light mb-1">Company Profile</h2>
-            <p class="text-secondary small mb-0">
-                Account & business information
-            </p>
+      <a href="{% url 'logout' %}" class="btn btn-danger btn-sm"> Logout </a>
+    </div>
+  </div>
+
+  <!-- TOP CARDS -->
+  <div class="row g-4 mb-5">
+    <!-- Account -->
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-secondary small mb-4">Account</h6>
+
+          <div class="mb-3">
+            <div class="text-secondary small">Username</div>
+            <div class="fw-medium text-light">{{ request.user.username }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="text-secondary small">Email</div>
+            <div class="fw-medium text-light">{{ request.user.email }}</div>
+          </div>
+
+          <div>
+            <div class="text-secondary small">Phone</div>
+            <div class="fw-medium text-light">{{ profile.phone }}</div>
+          </div>
         </div>
-        <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{% url 'base' %}" class="btn btn-outline-light btn-sm">
-                Dashboard
-            </a>
-            <a href="{% url 'profile_edit' %}" class="btn btn-outline-info btn-sm">
-                Edit Profile
-            </a>
-
-
-                <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">
-                Logout
-            </a>
-        </div>
+      </div>
     </div>
 
-    <!-- TOP CARDS -->
-    <div class="row g-4 mb-5">
+    <!-- Company -->
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-secondary small mb-4">Company</h6>
 
-        <!-- Account -->
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h6 class="text-uppercase text-secondary small mb-4">Account</h6>
-
-                    <div class="mb-3">
-                        <div class="text-secondary small">Username</div>
-                        <div class="fw-medium text-light">{{ request.user.username }}</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="text-secondary small">Email</div>
-                        <div class="fw-medium text-light">{{ request.user.email }}</div>
-                    </div>
-
-                    <div>
-                        <div class="text-secondary small">Phone</div>
-                        <div class="fw-medium text-light">{{ profile.phone }}</div>
-                    </div>
-                </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="text-secondary small">Company Name</div>
+              <div class="fw-medium text-light">
+                {{ profile.Name_of_Company }}
+              </div>
             </div>
-        </div>
 
-        <!-- Company -->
-        <div class="col-md-8">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h6 class="text-uppercase text-secondary small mb-4">Company</h6>
-
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="text-secondary small">Company Name</div>
-                            <div class="fw-medium text-light">{{ profile.Name_of_Company }}</div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="text-secondary small">Person in Charge</div>
-                            <div class="fw-medium text-light">{{ profile.Name_of_Encharge }}</div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <div class="text-secondary small">Company Size</div>
-                            <div class="fw-medium text-light">{{ profile.get_company_size_display }}</div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="text-secondary small">Sector</div>
-                            <div class="fw-medium text-light">{{ profile.Sector }}</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <div class="text-secondary small">Person in Charge</div>
+              <div class="fw-medium text-light">
+                {{ profile.Name_of_Encharge }}
+              </div>
             </div>
+
+            <div class="col-md-6">
+              <div class="text-secondary small">Company Size</div>
+              <div class="fw-medium text-light">
+                {{ profile.get_company_size_display }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="text-secondary small">Sector</div>
+              <div class="fw-medium text-light">{{ profile.Sector }}</div>
+            </div>
+          </div>
         </div>
-
+      </div>
     </div>
+  </div>
 
-    <!-- ACTIVITY -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Recent Activity</h5>
-        <span class="text-secondary small">Last 20 actions</span>
+  <!-- ACTIVITY -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Recent Activity</h5>
+    <span class="text-secondary small">Last 20 actions</span>
+  </div>
+
+  <div class="card p-0 overflow-hidden">
+    <div class="table-responsive">
+      <table
+        class="table table-dark table-borderless table-hover align-middle mb-0"
+      >
+        <thead class="bg-secondary text-dark small">
+          <tr>
+            <th class="ps-4">Tool</th>
+            <th>Info</th>
+            <th class="text-center">Status</th>
+            <th class="text-end pe-4">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in histories %}
+          <tr class="border-bottom border-secondary">
+            <td class="ps-4 fw-semibold">{{ h.work }}</td>
+
+            <td class="text-secondary">{{ h.data|default:"—" }}</td>
+
+            <td class="text-center">
+              {% if h.status == "success" %}
+              <span class="badge rounded-pill bg-success px-3">Success</span>
+              {% elif h.status == "failed" %}
+              <span class="badge rounded-pill bg-danger px-3">Failed</span>
+              {% else %}
+              <span class="badge rounded-pill bg-warning text-dark px-3"
+                >Processing</span
+              >
+              {% endif %}
+            </td>
+
+            <td class="text-end pe-4 text-secondary">
+              {{ h.created_at|date:"M d, Y • H:i" }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center text-secondary py-4">
+              No activity yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-
-    <div class="card p-0 overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-dark table-borderless table-hover align-middle mb-0">
-                <thead class="bg-secondary text-dark small">
-                    <tr>
-                        <th class="ps-4">Tool</th>
-                        <th>Info</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-end pe-4">Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for h in histories %}
-                    <tr class="border-bottom border-secondary">
-                        <td class="ps-4 fw-semibold">
-                            {{ h.work }}
-                        </td>
-
-                        <td class="text-secondary">
-                            {{ h.data|default:"—" }}
-                        </td>
-
-                        <td class="text-center">
-                            {% if h.status == "success" %}
-                                <span class="badge rounded-pill bg-success px-3">Success</span>
-                            {% elif h.status == "failed" %}
-                                <span class="badge rounded-pill bg-danger px-3">Failed</span>
-                            {% else %}
-                                <span class="badge rounded-pill bg-warning text-dark px-3">Processing</span>
-                            {% endif %}
-                        </td>
-
-                        <td class="text-end pe-4 text-secondary">
-                            {{ h.created_at|date:"M d, Y • H:i" }}
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center text-secondary py-4">
-                            No activity yet.
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+  </div>
 </div>
 {% endblock %}

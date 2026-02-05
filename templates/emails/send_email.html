@@ -1,15 +1,9 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Send Email | MyApp{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}Send Email |
+MyApp{% endblock %} {% block content %}
 
 <div class="text-center mb-5">
-    <h2 class="fw-semibold">Send Bulk Email</h2>
-    <p class="text-secondary">
-        Compose and send emails to multiple recipients.
-    </p>
+  <h2 class="fw-semibold">Send Bulk Email</h2>
+  <p class="text-secondary">Compose and send emails to multiple recipients.</p>
 </div>
 
 <!-- CKEditor Scripts -->
@@ -17,32 +11,31 @@
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
+  <div class="col-md-8">
+    <div class="card bg-dark border border-secondary rounded-4">
+      <div class="card-body p-4">
+        <form
+          action="{% url 'send_email' %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
 
-        <div class="card bg-dark border border-secondary rounded-4">
-            <div class="card-body p-4">
+          <!-- Form wrapper to enforce dark text -->
+          <div class="text-light">{{ form.as_p }}</div>
 
-                <form action="{% url 'send_email' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
+          <button
+            type="submit"
+            class="btn btn-light text-dark w-100 fw-medium mt-3"
+          >
+            Proceed
+          </button>
 
-                    <!-- Form wrapper to enforce dark text -->
-                    <div class="text-light">
-                        {{ form.as_p }}
-                    </div>
-
-                    <button type="submit" class="btn btn-light text-dark w-100 fw-medium mt-3">
-                        Proceed
-                    </button>
-
-                    <div class="mt-4">
-                        {% include "alerts.html" %}
-                    </div>
-                </form>
-
-            </div>
-        </div>
-
+          <div class="mt-4">{% include "alerts.html" %}</div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
 {% endblock %}

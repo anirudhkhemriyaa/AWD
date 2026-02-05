@@ -1,107 +1,92 @@
-{% extends 'layout.html' %}
-
-{% block content %}
+{% extends 'layout.html' %} {% block content %}
 
 <div class="container">
+  <div class="text-center mb-5">
+    <h2 class="fw-semibold">Email Tracking</h2>
+    <p class="text-secondary">Campaign performance and engagement insights</p>
+  </div>
 
-    <div class="text-center mb-5">
-        <h2 class="fw-semibold">Email Tracking</h2>
-        <p class="text-secondary">
-            Campaign performance and engagement insights
-        </p>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle">
+      <thead class="border-bottom border-secondary">
+        <tr class="text-secondary small">
+          <th>#</th>
+          <th>Campaign</th>
+          <th>List</th>
+          <th class="text-center">Sent</th>
+          <th>Engagement</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for email in emails %}
+        <tr>
+          <!-- Index -->
+          <th class="text-secondary">{{ forloop.counter }}</th>
 
-    <div class="table-responsive">
-        <table class="table table-dark table-hover align-middle">
-            <thead class="border-bottom border-secondary">
-                <tr class="text-secondary small">
-                    <th>#</th>
-                    <th>Campaign</th>
-                    <th>List</th>
-                    <th class="text-center">Sent</th>
-                    <th>Engagement</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
+          <!-- Subject -->
+          <td>
+            <div class="fw-medium text-light">{{ email.subject }}</div>
+            <div class="text-secondary small">{{ email.sent_at }}</div>
+          </td>
 
-                {% for email in emails %}
-                <tr>
-                    <!-- Index -->
-                    <th class="text-secondary">
-                        {{ forloop.counter }}
-                    </th>
+          <!-- List -->
+          <td class="text-secondary">{{ email.email_list }}</td>
 
-                    <!-- Subject -->
-                    <td>
-                        <div class="fw-medium text-light">
-                            {{ email.subject }}
-                        </div>
-                        <div class="text-secondary small">
-                            {{ email.sent_at }}
-                        </div>
-                    </td>
+          <!-- Sent -->
+          <td class="text-center fw-medium text-light">
+            {{ email.total_sent }}
+          </td>
 
-                    <!-- List -->
-                    <td class="text-secondary">
-                        {{ email.email_list }}
-                    </td>
+          <!-- Engagement -->
+          <td style="min-width: 260px">
+            <!-- Opened -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-light">Opened</span>
+                <span class="text-light fw-medium">{{ email.open_rate }}%</span>
+              </div>
+              <div class="progress bg-secondary" style="height: 10px">
+                <div
+                  class="progress-bar bg-info"
+                  role="progressbar"
+                  style="width: {{ email.open_rate }}%"
+                ></div>
+              </div>
+            </div>
 
-                    <!-- Sent -->
-                    <td class="text-center fw-medium text-light">
-                        {{ email.total_sent }}
-                    </td>
+            <!-- Clicked -->
+            <div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-light">Clicked</span>
+                <span class="text-light fw-medium"
+                  >{{ email.click_rate }}%</span
+                >
+              </div>
+              <div class="progress bg-secondary" style="height: 10px">
+                <div
+                  class="progress-bar bg-primary"
+                  role="progressbar"
+                  style="width: {{ email.click_rate }}%"
+                ></div>
+              </div>
+            </div>
+          </td>
 
-                    <!-- Engagement -->
-                    <td style="min-width: 260px;">
-                    <!-- Opened -->
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span class="text-light">Opened</span>
-                            <span class="text-light fw-medium">{{ email.open_rate }}%</span>
-                        </div>
-                        <div class="progress bg-secondary" style="height: 10px;">
-                            <div
-                                class="progress-bar bg-info"
-                                role="progressbar"
-                                style="width: {{ email.open_rate }}%"
-                            ></div>
-                        </div>
-                    </div>
-
-                    <!-- Clicked -->
-                    <div>
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span class="text-light">Clicked</span>
-                            <span class="text-light fw-medium">{{ email.click_rate }}%</span>
-                        </div>
-                        <div class="progress bg-secondary" style="height: 10px;">
-                            <div
-                                class="progress-bar bg-primary"
-                                role="progressbar"
-                                style="width: {{ email.click_rate }}%"
-                            ></div>
-                        </div>
-                    </div>
-                </td>
-
-
-                    <!-- Action -->
-                    <td class="text-end">
-                        <a
-                            href="{% url 'track_stats' email.id %}"
-                            class="btn btn-sm btn-outline-light"
-                        >
-                            View
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-    </div>
-
+          <!-- Action -->
+          <td class="text-end">
+            <a
+              href="{% url 'track_stats' email.id %}"
+              class="btn btn-sm btn-outline-light"
+            >
+              View
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 {% endblock %}

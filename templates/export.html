@@ -1,77 +1,63 @@
-{% extends "layout.html" %}
-{% load static %}
-
-{% block title %}Export Data | MyApp{% endblock %}
-
-{% block content %}
+{% extends "layout.html" %} {% load static %} {% block title %}Export Data |
+MyApp{% endblock %} {% block content %}
 
 <div class="text-center mb-5">
-    <h2 class="fw-semibold">Export Data</h2>
-    <p class="text-secondary">
-        Download database records as a CSV file.
-    </p>
+  <h2 class="fw-semibold">Export Data</h2>
+  <p class="text-secondary">Download database records as a CSV file.</p>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
+  <div class="col-md-6">
+    <div class="card bg-dark border border-secondary rounded-4">
+      <div class="card-body p-4">
+        <form action="{% url 'export' %}" method="post">
+          {% csrf_token %}
 
-        <div class="card bg-dark border border-secondary rounded-4">
-            <div class="card-body p-4">
+          <div class="mb-4">
+            <label for="model_name" class="form-label text-light fw-medium">
+              Select Model
+            </label>
+            <select
+              id="model_name"
+              name="model_name"
+              class="form-select bg-dark text-light border-secondary"
+              required
+            >
+              <option value="" disabled selected class="text-secondary">
+                Choose a model
+              </option>
+              {% for model in models %}
+              <option value="{{ model }}">{{ model }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-                <form action="{% url 'export' %}" method="post">
-                    {% csrf_token %}
+          <button type="submit" class="btn btn-info text-dark w-100 fw-medium">
+            Export CSV
+          </button>
 
-                    <div class="mb-4">
-                        <label for="model_name" class="form-label text-light fw-medium">
-                            Select Model
-                        </label>
-                        <select
-                            id="model_name"
-                            name="model_name"
-                            class="form-select bg-dark text-light border-secondary"
-                            required
-                        >
-                            <option value="" disabled selected class="text-secondary">
-                                Choose a model
-                            </option>
-                            {% for model in models %}
-                                <option value="{{ model }}">{{ model }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-info text-dark w-100 fw-medium">
-                        Export CSV
-                    </button>
-
-                    <div class="mt-4">
-                        {% include "alerts.html" %}
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
+          <div class="mt-4">{% include "alerts.html" %}</div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Example Format Preview -->
 <div class="row justify-content-center mt-5">
-    <div class="col-md-8">
+  <div class="col-md-8">
+    <div class="card bg-dark border border-secondary rounded-4">
+      <div class="card-body p-4">
+        <h5 class="text-light mb-2">Example Export Format</h5>
+        <p class="text-secondary small mb-4">
+          Below is how the CSV will look for the
+          <span class="text-info">Employee</span> model.
+        </p>
 
-        <div class="card bg-dark border border-secondary rounded-4">
-            <div class="card-body p-4">
-
-                <h5 class="text-light mb-2">Example Export Format</h5>
-                <p class="text-secondary small mb-4">
-                    Below is how the CSV will look for the <span class="text-info">Employee</span> model.
-                </p>
-
-                <div class="table-responsive">
-    <table class="table table-dark table-bordered small align-middle">
-        <thead class="table-secondary text-dark">
-            <tr>
+        <div class="table-responsive">
+          <table class="table table-dark table-bordered small align-middle">
+            <thead class="table-secondary text-dark">
+              <tr>
                 <th>id</th>
                 <th>first_name</th>
                 <th>last_name</th>
@@ -79,10 +65,10 @@
                 <th>phone</th>
                 <th>department</th>
                 <th>joined_date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
                 <td>1</td>
                 <td>John</td>
                 <td>Doe</td>
@@ -90,8 +76,8 @@
                 <td>9876543210</td>
                 <td>Sales</td>
                 <td>2024-01-15</td>
-            </tr>
-            <tr>
+              </tr>
+              <tr>
                 <td>2</td>
                 <td>Jane</td>
                 <td>Smith</td>
@@ -99,24 +85,18 @@
                 <td>9123456789</td>
                 <td>HR</td>
                 <td>2023-11-02</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-
-
-                <p class="text-secondary small mt-3 mb-0">
-                    Column names match the model fields.  
-                    Dates use <strong>YYYY-MM-DD</strong> format.
-                </p>
-
-            </div>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
+        <p class="text-secondary small mt-3 mb-0">
+          Column names match the model fields. Dates use
+          <strong>YYYY-MM-DD</strong> format.
+        </p>
+      </div>
     </div>
+  </div>
 </div>
-
-
 
 {% endblock %}

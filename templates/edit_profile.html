@@ -1,160 +1,182 @@
-{% extends "base.html" %}
-{% block title %}Edit Profile | AWM{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Edit Profile | AWM{% endblock %} {%
+block content %}
 
 <style>
-.form-control,
-.form-select {
+  .form-control,
+  .form-select {
     background-color: #111 !important;
     color: #f8f9fa !important;
     border: 1px solid #444 !important;
-}
+  }
 
-.form-control::placeholder {
+  .form-control::placeholder {
     color: #888 !important;
-}
+  }
 
-.form-control:focus,
-.form-select:focus {
+  .form-control:focus,
+  .form-select:focus {
     background-color: #000 !important;
     color: #fff !important;
     border-color: #0dcaf0 !important;
     box-shadow: 0 0 0 0.15rem rgba(13, 202, 240, 0.25) !important;
-}
+  }
 
-.form-label {
+  .form-label {
     color: #adb5bd !important;
-}
+  }
 
-.is-invalid {
+  .is-invalid {
     border-color: #dc3545 !important;
-}
+  }
 </style>
 
-
 <div class="container py-5">
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
+    <div>
+      <h2 class="fw-semibold mb-1">Edit Company Profile</h2>
+      <p class="text-secondary small mb-0">
+        Update your account & business information
+      </p>
+    </div>
+    <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
+      Back to Profile
+    </a>
+  </div>
 
-    <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="fw-semibold mb-1">Edit Company Profile</h2>
-            <p class="text-secondary small mb-0">
-                Update your account & business information
-            </p>
+  <div class="row g-4">
+    <!-- ACCOUNT CONTEXT -->
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-secondary small mb-4">Account</h6>
+
+          <div class="mb-3">
+            <div class="text-secondary small">Username</div>
+            <div class="fw-medium text-light">{{ request.user.username }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="text-secondary small">Email</div>
+            <div class="fw-medium text-light">{{ request.user.email }}</div>
+          </div>
+
+          <div>
+            <div class="text-secondary small">Phone</div>
+            <div class="fw-medium text-light">{{ profile.phone }}</div>
+          </div>
         </div>
-        <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
-            Back to Profile
-        </a>
+      </div>
     </div>
 
-    <div class="row g-4">
+    <!-- EDIT FORM -->
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-secondary small mb-4">
+            Company Details
+          </h6>
 
-        <!-- ACCOUNT CONTEXT -->
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h6 class="text-uppercase text-secondary small mb-4">
-                        Account
-                    </h6>
+          <form method="POST">
+            {% csrf_token %}
 
-                    <div class="mb-3">
-                        <div class="text-secondary small">Username</div>
-                        <div class="fw-medium text-light">{{ request.user.username }}</div>
-                    </div>
+            <div class="row g-3 text-light">
+              <div class="col-12">
+                <label class="form-label small">Company Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="Name_of_Company"
+                  value="{{ profile.Name_of_Company }}"
+                />
+              </div>
 
-                    <div class="mb-3">
-                        <div class="text-secondary small">Email</div>
-                        <div class="fw-medium text-light">{{ request.user.email }}</div>
-                    </div>
+              <div class="col-md-6">
+                <label class="form-label small">Person in Charge</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="Name_of_Encharge"
+                  value="{{ profile.Name_of_Encharge }}"
+                />
+              </div>
 
-                    <div>
-                        <div class="text-secondary small">Phone</div>
-                        <div class="fw-medium text-light">{{ profile.phone }}</div>
-                    </div>
-                </div>
+              <div class="col-md-6">
+                <label class="form-label small">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="username"
+                  value="{{ profile.username }}"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small">Sector</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="Sector"
+                  value="{{ profile.Sector }}"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small">Email</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="email"
+                  value="{{ profile.email }}"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small">Company Size</label>
+                <select class="form-select" name="company_size">
+                  {% for value,label in profile.SIZE_CHOICES %}
+                  <option
+                    value="{{ value }}"
+                    {%
+                    if
+                    profile.company_size=""
+                    ="value"
+                    %}selected{%
+                    endif
+                    %}
+                  >
+                    {{ label }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small">Phone</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="phone"
+                  value="{{ profile.phone }}"
+                />
+              </div>
             </div>
-        </div>
 
-        <!-- EDIT FORM -->
-        <div class="col-md-8">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h6 class="text-uppercase text-secondary small mb-4">
-                        Company Details
-                    </h6>
-
-                    <form method="POST">
-                        {% csrf_token %}
-
-                        <div class="row g-3 text-light">
-
-                            <div class="col-12">
-                                <label class="form-label small">Company Name</label>
-                                <input type="text" class="form-control" name="Name_of_Company"
-                                       value="{{ profile.Name_of_Company }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Person in Charge</label>
-                                <input type="text" class="form-control" name="Name_of_Encharge"
-                                       value="{{ profile.Name_of_Encharge }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Username</label>
-                                <input type="text" class="form-control" name="username"
-                                       value="{{ profile.username }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Sector</label>
-                                <input type="text" class="form-control" name="Sector"
-                                       value="{{ profile.Sector }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Email</label>
-                                <input type="text" class="form-control" name="email"
-                                       value="{{ profile.email }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Company Size</label>
-                                <select class="form-select" name="company_size">
-                                    {% for value,label in profile.SIZE_CHOICES %}
-                                        <option value="{{ value }}"
-                                            {% if profile.company_size == value %}selected{% endif %}>
-                                            {{ label }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small">Phone</label>
-                                <input type="text" class="form-control" name="phone"
-                                       value="{{ profile.phone }}">
-                            </div>
-
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
-                                Cancel
-                            </a>
-                            <button type="submit" class="btn btn-accent btn-sm">
-                                Save Changes
-                            </button>
-                        </div>
-
-                    </form>
-
-                </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a
+                href="{% url 'profile' %}"
+                class="btn btn-outline-light btn-sm"
+              >
+                Cancel
+              </a>
+              <button type="submit" class="btn btn-accent btn-sm">
+                Save Changes
+              </button>
             </div>
+          </form>
         </div>
-
+      </div>
     </div>
-
+  </div>
 </div>
 {% endblock %}

@@ -1,68 +1,50 @@
+from datetime import datetime, time, timedelta
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 from redis import Redis
-from .models import UserSubscription
+from .models import DailyUsage
+
 
 redis = Redis()
 
-def enforce_import_limit(user):
-    sub = UserSubscription.objects.select_related('plan').get(user=user)
+LIMIT_LUA = """
+local current = redis.call("INCR", KEYS[1])
+if current == 1 then
+  redis.call("EXPIRE", KEYS[1], ARGV[1])
+end
+if current > tonumber(ARGV[2]) then
+  redis.call("DECR", KEYS[1])
+  return -1
+end
+return current
+"""
 
-    if not sub.is_valid():
-        raise PermissionDenied("Subscription expired")
+limit_script = redis.register_script(LIMIT_LUA)
 
+def seconds_until_midnight():
+    now = timezone.now()
+    tomorrow = (now + timedelta(days=1)).date()
+    midnight = datetime.combine(tomorrow, time.min).astimezone(now.tzinfo)
+    return int((midnight - now).total_seconds())
+
+
+
+def enforce(user, action, daily_limit):
     today = timezone.now().date()
-    key = f"import:{user.id}:{today}"
+    key = f"{action}:{user.id}:{today}"
 
-    count = redis.incr(key)
-    redis.expire(key, 86400)
+    ttl = seconds_until_midnight()
 
-    if count > sub.plan.import_limit_per_day:
-        redis.decr(key)
-        raise PermissionDenied("Daily import limit exceeded")
-    
+    result = limit_script(
+        keys=[key],
+        args=[ttl, daily_limit],
+    )
 
-
-
-def enforce_export_limit(user):
-    sub = UserSubscription.objects.select_related('plan').get(user=user)
-
-    if not sub.is_valid():
-        raise PermissionDenied("Subscription expired")
-
-    today = timezone.now().date()
-    key = f"export:{user.id}:{today}"
-
-    count = redis.incr(key)
-    redis.expire(key, 86400)
-
-    if count > sub.plan.export_limit_per_day:
-        redis.decr(key)
-        raise PermissionDenied("Daily export limit exceeded")
+    if result == -1:
+        raise PermissionDenied(f"Daily {action} limit exceeded")
 
 
 
-
-def enforce_email_limit(user):
-    sub = UserSubscription.objects.select_related('plan').get(user=user)
-
-    if not sub.is_valid():
-        raise PermissionDenied("Subscription expired")
-
-    today = timezone.now().date()
-    key = f"email:{user.id}:{today}"
-
-    count = redis.incr(key)
-    redis.expire(key, 86400)
-
-    if count > sub.plan.email_limit_per_day:
-        redis.decr(key)
-        raise PermissionDenied("Daily email limit exceeded")
-    
-
-
-from django.utils import timezone
-from .models import DailyUsage
 
 def record_usage(user, field):
     today = timezone.now().date()

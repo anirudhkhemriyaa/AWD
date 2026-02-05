@@ -21,9 +21,14 @@ class CustomUser(AbstractUser):
     company_size = models.CharField(max_length=10, choices=SIZE_CHOICES)
 
 
+    def __str__(self):
+        return f"{self.Name_of_Company} -- {self.Name_of_Encharge}"
+
+
 
 
 class Student(models.Model):
+    user = models.ForeignKey(CustomUser , on_delete=models.CASCADE)
     Roll_no = models.CharField(max_length=10)
     name = models.CharField(max_length=20)
     age = models.IntegerField()
@@ -33,17 +38,10 @@ class Student(models.Model):
     
 
 
-class Customer(models.Model):
-    country = models.CharField(max_length=50)
-    country_code = models.IntegerField()
-
-
-    def __str__(self):
-        return self.country
-    
 
 
 class Employee(models.Model):
+    user = models.ForeignKey(CustomUser , on_delete=models.CASCADE)
     employee_id = models.IntegerField()
     employee_name = models.CharField(max_length=100)
     designation = models.CharField(max_length=200)
@@ -52,6 +50,12 @@ class Employee(models.Model):
     other_benefits = models.DecimalField(max_digits=50 , decimal_places=2)
     total_benefits = models.DecimalField(max_digits=50 , decimal_places=2)
     total_compensation = models.DecimalField(max_digits=50 , decimal_places=2)
+
+
+    def __str__(self):
+        return f"{self.employee_id} -- {self.employee_name}"
+
+
 
 
 class History(models.Model):
@@ -66,7 +70,7 @@ class History(models.Model):
         ('success', 'Success'),
         ('failed', 'Failed'),
     ]
-
+    
     company = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -86,7 +90,7 @@ class History(models.Model):
         choices=STATUS_CHOICES,
         default="success"
     )
-
+    started_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -137,3 +141,7 @@ class DailyUsage(models.Model):
 
     class Meta:
         unique_together = ('user', 'date')
+
+
+    def __str__(self):
+        return f"{self.user} -- {self.date}"

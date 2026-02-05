@@ -8,7 +8,6 @@ from django.conf import settings
 import datetime
 import os
 from Email.models import Email, EmailTracking , Sent, Subscriber
-from Data_entry.models import History , Customer
 import time
 from bs4 import BeautifulSoup
 
@@ -45,6 +44,7 @@ def check_csv_error(file_path, model_name):
 
     model_fields = {
         field.name for field in model._meta.fields
+        if field.name not in ("id", "user")
         if field.name not in ("id", "email_list")
     }
 
@@ -64,7 +64,7 @@ def check_csv_error(file_path, model_name):
 
 
  
- #=================================Sending Eamil======================= =============
+ #=================================Sending Eamil====================================
 
 def send_email_notification(mail_subject , message , to_email , attachment=None , email_id=None): 
     try:
@@ -75,8 +75,14 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
              #-----tracking record----
             new_message=message
             if email_id:
-                email = Email.objects.get(pk=email_id)
-                subscriber = Subscriber.objects.get(email_list=email.email_list , email_address=recipient)
+                email = Email.objects.get(pk=email_id, company=email.company)
+
+                subscriber = Subscriber.objects.filter(
+                    company=email.company,
+                    email_list=email.email_list,
+                    email_address=recipient
+                ).first()
+
                 timestamp = str(time.time())
                 data_to_hash = f"{recipient}{timestamp}"
                 unique_id = hashlib.sha256(data_to_hash.encode()).hexdigest()
@@ -118,13 +124,15 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
         raise e
         
 
-#=======================Generating csv file name and path for exporting data=================
+#=======================generating csv file name and path for exporting data=================
+
 
 def generate_csv_file(model_name):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
 
-    export_dir = 'exported_data'
+    export_dir = os.path.join(settings.MEDIA_ROOT, "exported_data")
 
-    file_name = f'exported_data_of_{model_name}-{timestamp}.csv'
-    file_path = os.path.join(settings.MEDIA_ROOT , export_dir , file_name)
+    file_name = f"exported_data_of_{model_name}-{timestamp}.csv"
+    file_path = os.path.join(export_dir, file_name)
+
     return file_path

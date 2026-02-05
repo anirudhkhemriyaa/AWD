@@ -1,8 +1,6 @@
 import csv
 from django.core.management.base import BaseCommand
-from Data_entry.models import Student
 from django.apps import apps
-from Data_entry.utils import generate_csv_file
 
 #=============================Export data from any model (except some) to csv file ===============================
 
@@ -10,9 +8,15 @@ class Command(BaseCommand):
     help = "Export data"
 
     def add_arguments(self, parser):
-        parser.add_argument('model_name' , type=str , help="Enter model name")
+        parser.add_argument("model_name", type=str)
+        parser.add_argument("--user_id", type=int, required=True)
+        parser.add_argument("--file_path", type=str, required=True)
 
     def handle(self , *args, **kwargs):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        user = User.objects.get(id=kwargs["user_id"])
         model_name = kwargs['model_name'].capitalize()
 
         model = None
@@ -24,9 +28,10 @@ class Command(BaseCommand):
                 pass
 
         if model is not None:
-            dataset = model.objects.all()
+            dataset = model.objects.filter(user=user)
 
-        file_path = generate_csv_file(model_name)
+        file_path = kwargs["file_path"]
+
 
         with open(file_path , 'w' , newline='') as file:
             writer = csv.writer(file)

@@ -1,14 +1,15 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from Data_entry.limit import enforce
 from .forms import Email_form
 from django.contrib import messages
-from .models import EmailTracking, Sent, Subscriber
+from .models import EmailTracking, Sent, Subscriber, Email
 from .tasks import send_email_task
-from .models import Email
 from django.db.models import Sum
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from Data_entry.models import History
+from Data_entry.models import History, UserSubscription
+from django.core.exceptions import PermissionDenied
 # Create your views here.
 
 #=============================Send bulk email view===================
@@ -18,6 +19,19 @@ def send_email(request):
         form = Email_form(request.POST, request.FILES)
         if form.is_valid():
             email = form.save()
+
+            user = request.user
+            sub = UserSubscription.objects.select_related("plan").get(user=user)
+
+            if not sub.is_valid():
+                messages.error(request, "Your subscription has expired.")
+                return redirect("send_email")
+
+            try:
+                enforce(user, "email", sub.plan.email_limit_per_day)
+            except PermissionDenied as e:
+                messages.error(request, str(e))
+                return redirect("send_email")
 
             mail_subject = email.subject
             msg = email.body
@@ -29,13 +43,14 @@ def send_email(request):
             attachment = email.attachment.path if email.attachment else None
 
             history = History.objects.create(
-            company=request.user,
-            work="Email_Send",
-            data=f"{len(to_email)} recipients",
-            status="processing"
+                company=user,
+                work="Email_Send",
+                data=f"{len(to_email)} recipients",
+                status="processing",
             )
 
             send_email_task.delay(
+                user.id,
                 mail_subject,
                 msg,
                 to_email,
@@ -44,12 +59,11 @@ def send_email(request):
                 history.id
             )
 
-
-            messages.success(request, 'Emails are being sent')
-            return redirect('send_email')
+            messages.success(request, "Emails are being sent.")
+            return redirect("send_email")
 
     form = Email_form()
-    return render(request, 'emails/send_email.html', {'form': form})
+    return render(request, "emails/send_email.html", {"form": form})
 
 
 

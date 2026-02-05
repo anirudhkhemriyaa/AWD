@@ -1,4 +1,5 @@
 from django.db import models
+from Data_entry.models import CustomUser
 from ckeditor.fields import RichTextField
 # Create your models here.
 
@@ -27,6 +28,7 @@ class Subscriber(models.Model):
 #=====================================Email part composing email========================
 
 class Email(models.Model):
+    company = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="emails")
     email_list = models.ForeignKey(List , on_delete=models.CASCADE )
     subject = models.CharField(max_length=50)
     body = RichTextField()

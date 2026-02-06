@@ -70,7 +70,7 @@ def send_email(request):
 
 
 
-@login_required(login_url="login")
+
 def track_open(request, unique_id):
     print("tracking open...")
     try:

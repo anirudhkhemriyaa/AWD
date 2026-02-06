@@ -1,4 +1,5 @@
 import hashlib
+from shlex import quote
 from django.apps import apps
 from django.core.management.base import CommandError
 import csv
@@ -75,10 +76,10 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
              #-----tracking record----
             new_message=message
             if email_id:
-                email = Email.objects.get(pk=email_id, company=email.company)
+                email = Email.objects.get(pk=email_id)
 
                 subscriber = Subscriber.objects.filter(
-                    company=email.company,
+                    # company=email.company,
                     email_list=email.email_list,
                     email_address=recipient
                 ).first()
@@ -99,13 +100,15 @@ def send_email_notification(mail_subject , message , to_email , attachment=None 
                 #------------search for link in msg-------
                 soap = BeautifulSoup(message , 'html.parser')
                 urls = [ a['href'] for a in soap.find_all('a' , href=True)]
+                for a in soap.find_all('a', href=True):
+                    original = a['href']
+                    a['href'] = f"{click_tracking_url}?url={quote(original, safe='')}"
 
-                if urls:
-                    for url in urls:
-                        tracked_url = f"{click_tracking_url}?url={url}"
-                        new_message = new_message.replace(f"{url}" , f"{tracked_url}")
+                new_message = str(soap)
 
-                open_tracking_image=f"<img src='{open_tracking_url}' width='1' height='1'>"
+
+               
+                open_tracking_image=f"<img src='{open_tracking_url}' width='1' height='1' "f"style='display:none;' alt=''>"
                 new_message += open_tracking_image
                 
             mail = EmailMessage(mail_subject , new_message , from_email , to=[recipient])

@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% block title %}Profile | MyApp{% endblock %} {%
-block content %}
+{% extends "base.html" %} {% block title %}Profile | MyApp{% endblock %} {%block content %}
 <div class="container py-5">
   <!-- Header -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
@@ -86,7 +85,7 @@ block content %}
   <!-- ACTIVITY -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Recent Activity</h5>
-    <span class="text-secondary small">Last 20 actions</span>
+    <span class="text-secondary small">Last 5 actions</span>
   </div>
 
   <div class="card p-0 overflow-hidden">
@@ -103,7 +102,7 @@ block content %}
           </tr>
         </thead>
         <tbody>
-          {% for h in histories %}
+          {% for h in histories|slice:":5" %}
           <tr class="border-bottom border-secondary">
             <td class="ps-4 fw-semibold">{{ h.work }}</td>
 

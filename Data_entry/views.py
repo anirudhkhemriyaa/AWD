@@ -48,8 +48,18 @@ def home(request):
             return redirect("home")
 
         user = request.user
-        sub = UserSubscription.objects.select_related("plan").get(user=user)
 
+        sub = UserSubscription.objects.filter(
+            user=user,
+            is_active=True
+        ).select_related("plan").first()
+
+        # No subscription at all
+        if not sub:
+            messages.error(request, "You don't have a subscription to use this tool.")
+            return redirect("home")
+
+        # Expired subscription
         if not sub.is_valid():
             messages.error(request, "Your subscription has expired.")
             return redirect("home")
@@ -94,11 +104,20 @@ def export(request):
         model_name = request.POST.get("model_name")
         user = request.user
 
-        sub = UserSubscription.objects.select_related("plan").get(user=user)
+        sub = UserSubscription.objects.filter(
+            user=user,
+            is_active=True
+        ).select_related("plan").first()
 
+        # No subscription at all
+        if not sub:
+            messages.error(request, "You don't have a subscription to use this tool.")
+            return redirect("home")
+
+        # Expired subscription
         if not sub.is_valid():
             messages.error(request, "Your subscription has expired.")
-            return redirect("export")
+            return redirect("home")
 
         try:
             enforce(user, "export", sub.plan.export_limit_per_day)

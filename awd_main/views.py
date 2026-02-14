@@ -2,8 +2,10 @@ from django.shortcuts import render , redirect
 from .forms import RegistrationForm
 from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm
-from Data_entry.models import CustomUser
+from Data_entry.models import CustomUser, DailyUsage, UserSubscription
 from django.contrib.auth.decorators import login_required
+from datetime import date
+from django.utils import timezone
 
 
 #============= Landing page ===========
@@ -66,14 +68,44 @@ def logout(request):
 
 #========================= Profile view =======================
 def profile(request):
-    user = CustomUser.objects.get(username=request.user.username)
-    histories = request.user.histories.order_by('-created_at')[:20]
-    context={
-        'profile':user,
-        "histories": histories,
-    }
-    return render(request , "profile.html" , context)
+    user = request.user
+    histories = user.histories.order_by('-created_at')[:20]
 
+    subscription = None
+    daily_usage = None
+    remaining = {}
+
+    try:
+        subscription = UserSubscription.objects.select_related("plan").get(user=user)
+
+        # Get today's usage (or create if not exists)
+        daily_usage, _ = DailyUsage.objects.get_or_create(
+            user=user,
+            date=date.today()
+        )
+
+        if subscription.is_valid():
+            plan = subscription.plan
+
+            remaining = {
+                "emails_left": max(plan.email_limit_per_day - daily_usage.emails_sent, 0),
+                "imports_left": max(plan.import_limit_per_day - daily_usage.imports_done, 0),
+                "exports_left": max(plan.export_limit_per_day - daily_usage.exports_done, 0),
+            }
+
+    except UserSubscription.DoesNotExist:
+        subscription = None
+
+    context = {
+        "profile": user,
+        "histories": histories,
+        "subscription": subscription,
+        "daily_usage": daily_usage,
+        "remaining": remaining,
+        "today": timezone.now(),
+    }
+
+    return render(request, "profile.html", context)
 
 #======================== Edit profile =======================
 

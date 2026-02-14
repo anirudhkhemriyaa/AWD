@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from Data_entry.limit import enforce
 from .forms import Email_form
 from django.contrib import messages
@@ -21,12 +21,21 @@ def send_email(request):
             email = form.save()
 
             user = request.user
-            sub = UserSubscription.objects.select_related("plan").get(user=user)
 
+            sub = UserSubscription.objects.filter(
+                user=user,
+                is_active=True
+            ).select_related("plan").first()
+
+            # No subscription at all
+            if not sub:
+                messages.error(request, "You don't have a subscription to use this tool.")
+                return redirect("home")
+
+            # Expired subscription
             if not sub.is_valid():
                 messages.error(request, "Your subscription has expired.")
-                return redirect("send_email")
-
+                return redirect("home")
             try:
                 enforce(user, "email", sub.plan.email_limit_per_day)
             except PermissionDenied as e:
@@ -107,7 +116,11 @@ def track_click(request , unique_id):
 #=========================tracking dashboard view=========================
 
 def tracking_dashboard(request):
-    emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent')).order_by('-sent_at')
+    emails = Email.objects.filter(
+        company=request.user   # or user=request.user
+    ).annotate(
+        total_sent=Sum('sent__total_sent')
+    ).order_by('-sent_at')
     context = {
         'emails':emails
     }
@@ -116,7 +129,11 @@ def tracking_dashboard(request):
 
 
 def track_stats(request , unique_id):
-    email = Email.objects.get(id=unique_id)
+    email = get_object_or_404(
+        Email,
+        id=unique_id,
+        company=request.user   # or user=request.user
+    )
     sent = Sent.objects.filter(email=email)
 
     context = {

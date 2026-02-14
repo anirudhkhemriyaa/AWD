@@ -112,12 +112,12 @@ def export(request):
         # No subscription at all
         if not sub:
             messages.error(request, "You don't have a subscription to use this tool.")
-            return redirect("home")
+            return redirect("export")
 
         # Expired subscription
         if not sub.is_valid():
             messages.error(request, "Your subscription has expired.")
-            return redirect("home")
+            return redirect("export")
 
         try:
             enforce(user, "export", sub.plan.export_limit_per_day)

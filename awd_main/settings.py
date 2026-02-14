@@ -173,3 +173,7 @@ BASE_URL = 'https://doretha-tuberoid-alec.ngrok-free.dev'
 
 
 AUTH_USER_MODEL = "Data_entry.CustomUser"
+
+
+
+GEMINI_API_KEY = "AIzaSyASexEBt6ueF3D0Jc8_2n-2RrEbZJL-87I"

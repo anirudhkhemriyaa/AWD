@@ -10,6 +10,13 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from Data_entry.models import History, UserSubscription
 from django.core.exceptions import PermissionDenied
+import google.generativeai as genai
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
 # Create your views here.
 
 #=============================Send bulk email view===================
@@ -18,7 +25,9 @@ def send_email(request):
     if request.method == "POST":
         form = Email_form(request.POST, request.FILES)
         if form.is_valid():
-            email = form.save()
+            email = form.save(commit=False)
+            email.company = request.user
+            email.save()
 
             user = request.user
 
@@ -30,12 +39,12 @@ def send_email(request):
             # No subscription at all
             if not sub:
                 messages.error(request, "You don't have a subscription to use this tool.")
-                return redirect("home")
+                return redirect("send_email")
 
             # Expired subscription
             if not sub.is_valid():
                 messages.error(request, "Your subscription has expired.")
-                return redirect("home")
+                return redirect("send_email")
             try:
                 enforce(user, "email", sub.plan.email_limit_per_day)
             except PermissionDenied as e:
@@ -73,9 +82,6 @@ def send_email(request):
 
     form = Email_form()
     return render(request, "emails/send_email.html", {"form": form})
-
-
-
 
 
 

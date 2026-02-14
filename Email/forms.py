@@ -5,7 +5,7 @@ class Email_form(forms.ModelForm):
 
     class Meta:
         model = Email
-        fields = "__all__"
+        exclude = ["company"]
 
         widgets = {
             # Email list / recipients

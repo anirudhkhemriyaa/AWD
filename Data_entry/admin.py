@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student  , Employee , CustomUser , History , UserSubscription,SubscriptionPlan,DailyUsage
+from .models import Student  , Employee , CustomUser , History , UserSubscription,SubscriptionPlan,DailyUsage 
 # Register your models here.
 
 admin.site.register(Student)

@@ -121,6 +121,7 @@ def track_click(request , unique_id):
 
 #=========================tracking dashboard view=========================
 
+@login_required(login_url="login")
 def tracking_dashboard(request):
     emails = Email.objects.filter(
         company=request.user   # or user=request.user

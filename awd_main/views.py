@@ -67,6 +67,7 @@ def logout(request):
 
 
 #========================= Profile view =======================
+@login_required
 def profile(request):
     user = request.user
     histories = user.histories.order_by('-created_at')[:20]

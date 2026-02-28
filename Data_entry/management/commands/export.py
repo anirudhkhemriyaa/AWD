@@ -1,5 +1,5 @@
 import csv
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.apps import apps
 
 #=============================Export data from any model (except some) to csv file ===============================
@@ -27,8 +27,10 @@ class Command(BaseCommand):
             except LookupError:
                 pass
 
-        if model is not None:
-            dataset = model.objects.filter(user=user)
+        if model is None:
+            raise CommandError(f"Model {model_name} not found")
+
+        dataset = model.objects.filter(user=user)
 
         file_path = kwargs["file_path"]
 

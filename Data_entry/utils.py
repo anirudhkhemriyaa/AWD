@@ -135,6 +135,8 @@ def generate_csv_file(model_name):
 
     export_dir = os.path.join(settings.MEDIA_ROOT, "exported_data")
 
+    os.makedirs(export_dir, exist_ok=True)
+
     file_name = f"exported_data_of_{model_name}-{timestamp}.csv"
     file_path = os.path.join(export_dir, file_name)
 

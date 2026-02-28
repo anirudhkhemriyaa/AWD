@@ -1,7 +1,6 @@
 from django.shortcuts import render , redirect
 from Email.models import List
 from .utils import check_csv_error, get_all_models
-from uploads.models import Upload
 from django.conf import settings
 from django.contrib import messages
 from .tasks import import_data_task , export_data_task
@@ -9,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import History, UserSubscription
 from .limit import enforce
 from django.core.exceptions import PermissionDenied
+from uploads.models import Upload
 
 # Create your views here.
 
@@ -76,13 +76,13 @@ def home(request):
             data=file_path.name,
             status="processing",
         )
-
+        
         import_data_task.delay(
             user.id,
             complete_path,
             model_name,
             history.id,
-            list_id
+            list_id=list_id if model_name == "subscriber" else None,
         )
 
         messages.success(request, "Your data is in processing, you will be notified.")
@@ -92,7 +92,6 @@ def home(request):
         "models": all_models,
         "subscriber_lists": subscriber_lists
     })
-
 
 
 

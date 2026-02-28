@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config
 from django.contrib.messages import constants as messages
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,13 +77,14 @@ WSGI_APPLICATION = 'awd_main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': config('HOST'),
-        'PORT': '5432',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -117,13 +120,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+
+STATIC_URL = "/static/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [
-    'awd_main/static',
+    BASE_DIR / "awd_main" / "static",
 ]
 
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media Files 
 
@@ -139,7 +145,9 @@ MESSAGE_TAGS = {
 }
 
 
-CELERY_BROKER_URL = 'redis://localhost:6380'
+
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+
 
 
 # Email config
@@ -157,9 +165,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 200,
+        'height': 300,
+        'width': '100%',
     },
 }
+
 
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
@@ -168,12 +178,11 @@ ANYMAIL = {
 }
 
 
-CSRF_TRUSTED_ORIGINS = ['https://doretha-tuberoid-alec.ngrok-free.dev']
-BASE_URL = 'https://doretha-tuberoid-alec.ngrok-free.dev'
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="").split()
+BASE_URL = config("BASE_URL", default="http://localhost:8000")
 
 
 AUTH_USER_MODEL = "Data_entry.CustomUser"
 
 
-
-GEMINI_API_KEY = "AIzaSyASexEBt6ueF3D0Jc8_2n-2RrEbZJL-87I"
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")

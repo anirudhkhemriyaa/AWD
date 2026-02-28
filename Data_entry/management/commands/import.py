@@ -32,7 +32,7 @@ class Command(BaseCommand):
         if model_name == "subscriber":
             if not list_id:
                 raise CommandError("Subscriber import requires --list_id")
-            email_list = List.objects.get(id=list_id, user=user)
+            email_list = List.objects.get(id=list_id)
 
 
         with open(file_path, 'r', encoding='utf-8-sig', errors='ignore') as file:

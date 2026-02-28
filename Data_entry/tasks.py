@@ -7,6 +7,7 @@ from Email.models import List
 from django.core.exceptions import PermissionDenied
 from .models import UserSubscription , CustomUser, UserSubscription, History
 from .limit import  record_usage, enforce
+from celery import shared_task
 
 
 #========================== Importing task in background ==================
@@ -56,7 +57,6 @@ def import_data_task(self, user_id, complete_path, model_name, history_id, list_
             [settings.DEFAULT_TO_EMAIL]
         )
         raise
-
 
 
 

@@ -158,56 +158,83 @@
 
   <!-- ACTIVITY -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">Recent Activity</h5>
-    <span class="text-secondary small">Last 5 actions</span>
+    <h5 class="mb-0">Recent Activity & Workflow Status</h5>
+    <div class="d-flex text-secondary small gap-3">
+      <span><strong id="metric-total" class="text-light">0</strong> Total Jobs</span>
+      <span><strong id="metric-failed" class="text-danger">0</strong> Failed</span>
+      <span>Avg Time: <strong id="metric-time" class="text-light">0s</strong></span>
+    </div>
   </div>
 
-  <div class="card p-0 overflow-hidden">
+  <div class="card p-0 overflow-hidden mb-5">
     <div class="table-responsive">
       <table
         class="table table-dark table-borderless table-hover align-middle mb-0"
       >
         <thead class="bg-secondary text-dark small">
           <tr>
-            <th class="ps-4">Tool</th>
+            <th class="ps-4">Work / Tool</th>
             <th>Info</th>
             <th class="text-center">Status</th>
+            <th class="text-center">Retries</th>
+            <th class="text-center">Time</th>
             <th class="text-end pe-4">Date</th>
           </tr>
         </thead>
-        <tbody>
-          {% for h in histories|slice:":5" %}
-          <tr class="border-bottom border-secondary">
-            <td class="ps-4 fw-semibold">{{ h.work }}</td>
-
-            <td class="text-secondary">{{ h.data|default:"—" }}</td>
-
-            <td class="text-center">
-              {% if h.status == "success" %}
-              <span class="badge rounded-pill bg-success px-3">Success</span>
-              {% elif h.status == "failed" %}
-              <span class="badge rounded-pill bg-danger px-3">Failed</span>
-              {% else %}
-              <span class="badge rounded-pill bg-warning text-dark px-3"
-                >Processing</span
-              >
-              {% endif %}
-            </td>
-
-            <td class="text-end pe-4 text-secondary">
-              {{ h.created_at|date:"M d, Y • H:i" }}
-            </td>
-          </tr>
-          {% empty %}
+        <tbody id="jobs-tbody">
+          <!-- Dynamically populated via JS -->
           <tr>
-            <td colspan="4" class="text-center text-secondary py-4">
-              No activity yet.
-            </td>
+            <td colspan="6" class="text-center text-secondary py-4">Loading job states...</td>
           </tr>
-          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<script>
+  function fetchJobs() {
+    fetch("{% url 'jobs_api' %}")
+      .then(r => r.json())
+      .then(data => {
+        // Update metrics
+        document.getElementById("metric-total").innerText = data.metrics.total;
+        document.getElementById("metric-failed").innerText = data.metrics.failed;
+        document.getElementById("metric-time").innerText = data.metrics.avg_time;
+
+        const tbody = document.getElementById("jobs-tbody");
+        if (data.jobs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-4">No activity yet.</td></tr>';
+            return;
+        }
+
+        let html = "";
+        data.jobs.forEach(job => {
+          let badgeClass = "bg-warning text-dark"; // processing/retrying/pending
+          let statusText = job.status.charAt(0).toUpperCase() + job.status.slice(1);
+          if (job.status === "success") badgeClass = "bg-success";
+          else if (job.status === "failed") badgeClass = "bg-danger";
+
+          html += `
+            <tr class="border-bottom border-secondary">
+              <td class="ps-4 fw-semibold">${job.work}</td>
+              <td class="text-secondary">${job.info}</td>
+              <td class="text-center">
+                <span class="badge rounded-pill ${badgeClass} px-3">${statusText}</span>
+              </td>
+              <td class="text-center text-secondary">${job.retries}</td>
+              <td class="text-center text-secondary">${job.time}</td>
+              <td class="text-end pe-4 text-secondary">${job.date}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      })
+      .catch(e => console.error("Error fetching jobs:", e));
+  }
+
+  // Initial fetch and poll every 3 seconds
+  fetchJobs();
+  setInterval(fetchJobs, 3000);
+</script>
 {% endblock %}

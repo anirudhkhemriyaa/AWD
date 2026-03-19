@@ -67,6 +67,9 @@ class History(models.Model):
     ]
 
     STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('retrying', 'Retrying'),
         ('success', 'Success'),
         ('failed', 'Failed'),
     ]
@@ -90,8 +93,21 @@ class History(models.Model):
         choices=STATUS_CHOICES,
         default="success"
     )
+    task_id = models.CharField(max_length=255, null=True, blank=True)
+    retry_count = models.IntegerField(default=0)
+    error_logs = models.TextField(null=True, blank=True)
     started_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def processing_time(self):
+        if self.started_at and self.completed_at:
+            return (self.completed_at - self.started_at).total_seconds()
+        elif self.started_at and self.status in ['processing', 'retrying']:
+            from django.utils import timezone
+            return (timezone.now() - self.started_at).total_seconds()
+        return 0
 
     def __str__(self):
         return f"{self.company} - {self.work} - {self.created_at}"

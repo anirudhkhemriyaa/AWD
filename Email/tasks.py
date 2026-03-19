@@ -5,14 +5,15 @@ from Data_entry.limit import enforce , record_usage
 from django.core.exceptions import PermissionDenied
 
 #==================Email task =========================
-@app.task(bind=True)
+@app.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 3}, retry_backoff=True)
 def send_email_task(self, user_id, mail_subject, msg, to_email, attachment, email_id, history_id):
+    from django.utils import timezone
 
     user = CustomUser.objects.get(id=user_id)
 
-    # mark real start time
     History.objects.filter(id=history_id).update(
         status="processing",
+        task_id=self.request.id,
     )
 
     sub = UserSubscription.objects.select_related("plan").get(user=user)
@@ -20,6 +21,8 @@ def send_email_task(self, user_id, mail_subject, msg, to_email, attachment, emai
     if not sub.is_valid():
         History.objects.filter(id=history_id).update(
             status="failed",
+            error_logs="Subscription expired",
+            completed_at=timezone.now()
         )
         raise PermissionDenied("Subscription expired")
 
@@ -30,14 +33,24 @@ def send_email_task(self, user_id, mail_subject, msg, to_email, attachment, emai
 
         History.objects.filter(id=history_id).update(
             status="success",
+            completed_at=timezone.now()
         )
 
         record_usage(user, "emails_sent")
         return "Email sending task success"
 
     except Exception as e:
-        History.objects.filter(id=history_id).update(
-            status="failed",
-        )
+        if self.request.retries < self.max_retries:
+            History.objects.filter(id=history_id).update(
+                status="retrying",
+                retry_count=self.request.retries + 1,
+                error_logs=str(e)
+            )
+        else:
+            History.objects.filter(id=history_id).update(
+                status="failed",
+                error_logs=str(e),
+                completed_at=timezone.now()
+            )
         raise
 

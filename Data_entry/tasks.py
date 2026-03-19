@@ -12,8 +12,9 @@ from celery import shared_task
 
 #========================== Importing task in background ==================
 
-@app.task(bind=True)
+@app.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 3}, retry_backoff=True)
 def import_data_task(self, user_id, complete_path, model_name, history_id, list_id=None):
+    from django.utils import timezone
 
     user = CustomUser.objects.get(id=user_id)
 
@@ -36,7 +37,10 @@ def import_data_task(self, user_id, complete_path, model_name, history_id, list_
 
         call_command('import', complete_path, model_name, list_id=email_list.id if email_list else None , user_id=user.id)
 
-        History.objects.filter(id=history_id).update(status="success")
+        History.objects.filter(id=history_id).update(
+            status="success",
+            completed_at=timezone.now()
+        )
 
         send_email_notification(
             'Data Import Completed',
@@ -49,7 +53,18 @@ def import_data_task(self, user_id, complete_path, model_name, history_id, list_
         return 'Data imported successfully'
 
     except Exception as e:
-        History.objects.filter(id=history_id).update(status="failed")
+        if self.request.retries < self.max_retries:
+            History.objects.filter(id=history_id).update(
+                status="retrying",
+                retry_count=self.request.retries + 1,
+                error_logs=str(e)
+            )
+        else:
+            History.objects.filter(id=history_id).update(
+                status="failed",
+                error_logs=str(e),
+                completed_at=timezone.now()
+            )
 
         send_email_notification(
             'Data Import Failed',
@@ -62,8 +77,9 @@ def import_data_task(self, user_id, complete_path, model_name, history_id, list_
 
 #========================== Exporting task in background ==================
 
-@app.task(bind=True)
+@app.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 3}, retry_backoff=True)
 def export_data_task(self, user_id, model_name, history_id):
+    from django.utils import timezone
 
     user = CustomUser.objects.get(id=user_id)
 
@@ -82,7 +98,8 @@ def export_data_task(self, user_id, model_name, history_id):
 
         History.objects.filter(id=history_id).update(
             status="success",
-            data=file_path
+            data=file_path,
+            completed_at=timezone.now()
         )
 
         send_email_notification(
@@ -96,9 +113,18 @@ def export_data_task(self, user_id, model_name, history_id):
         return 'Data exported successfully'
 
     except Exception as e:
-        History.objects.filter(id=history_id).update(
-            status="failed",
-        )
+        if self.request.retries < self.max_retries:
+            History.objects.filter(id=history_id).update(
+                status="retrying",
+                retry_count=self.request.retries + 1,
+                error_logs=str(e)
+            )
+        else:
+            History.objects.filter(id=history_id).update(
+                status="failed",
+                error_logs=str(e),
+                completed_at=timezone.now()
+            )
 
         send_email_notification(
             'Data Export Failed',

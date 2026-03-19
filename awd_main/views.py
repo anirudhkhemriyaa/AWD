@@ -4,6 +4,8 @@ from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm
 from Data_entry.models import CustomUser, DailyUsage, UserSubscription
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db.models import Avg, Count, Q, F
 from datetime import date
 from django.utils import timezone
 
@@ -128,3 +130,41 @@ def profile_edit(request):
         return redirect("profile")
 
     return render(request, "edit_profile.html", {"profile": profile})
+
+@login_required
+def jobs_api(request):
+    histories = request.user.histories.all()
+    
+    total = histories.count()
+    failed = histories.filter(status='failed').count()
+    
+    avg_dur = histories.filter(status='success', started_at__isnull=False, completed_at__isnull=False).aggregate(
+        avg_processing_time=Avg(F('completed_at') - F('started_at'))
+    )['avg_processing_time']
+    
+    avg_time_str = str(avg_dur).split('.')[0] if avg_dur else "0s"
+
+    recent_jobs = histories.order_by('-created_at')[:20]
+    results = []
+    
+    for job in recent_jobs:
+        ptime = job.processing_time
+        retries = job.retry_count
+        results.append({
+            "id": job.id,
+            "work": job.work,
+            "info": job.data or "—",
+            "status": job.status,
+            "retries": retries,
+            "time": f"{round(ptime, 1)}s" if ptime else "-",
+            "date": job.created_at.strftime("%b %d, %Y • %H:%M")
+        })
+        
+    return JsonResponse({
+        "metrics": {
+            "total": total,
+            "failed": failed,
+            "avg_time": avg_time_str
+        },
+        "jobs": results
+    })

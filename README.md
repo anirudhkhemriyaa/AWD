@@ -131,7 +131,7 @@ GEMINI_API_KEY=your-gemini-api-key
 > **Note**: Use strong, unique values for `SECRET_KEY` and `POSTGRES_PASSWORD` in any non-local environment.
 
 ---
-
+## You can check the System architecture on -- https://excalidraw.com/#json=LclzCxPfIMNl7xWTeF15d,jawk5Y6NQn-K6TMA47hWKQ
 ## Running the project with Docker
 
 ### 1. Clone the repository

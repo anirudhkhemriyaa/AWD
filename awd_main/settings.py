@@ -77,13 +77,13 @@ WSGI_APPLICATION = 'awd_main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': config('POSTGRES_HOST'),
-        'PORT': config('POSTGRES_PORT'),
+        'NAME': config('POSTGRES_DB', default='awddb'),
+        'USER': config('POSTGRES_USER', default='underani'),
+        'PASSWORD': config('POSTGRES_PASSWORD', default='db@undermarv'),
+        'HOST': config('POSTGRES_HOST', default='db'),
+        'PORT': config('POSTGRES_PORT', default='5432'),
     }
-}
+}   
 
 
 # Password validation
@@ -146,19 +146,21 @@ MESSAGE_TAGS = {
 
 
 
-CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_BROKER_URL = os.environ.get("REDIS_URL", config("REDIS_URL", default="redis://redis:6379/0"))
 
 
 
 # Email config
 
-# EMAIL_HOST = config('EMAIL_HOST')
-# EMAIL_POST = config('EMAIL_POST' , cast=int)
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD')
-# EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Automate with django <anirudhkhemriya@gmail.com>'
-DEFAULT_TO_EMAIL = 'Automate with django <khemriyakanha@gmail.com>'
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Automate with django <anirudhkhemriya@gmail.com>')
+DEFAULT_TO_EMAIL = config('DEFAULT_TO_EMAIL', default='Automate with django <anirudhkhemriya@gmail.com>')
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
@@ -170,12 +172,10 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-
-EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
-
 ANYMAIL = {
-    "SENDINBLUE_API_KEY": config('SENDINBLUE_API_KEY'),
+    "SENDINBLUE_API_KEY": config('SENDINBLUE_API_KEY', default=''),
 }
+
 
 
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="").split()

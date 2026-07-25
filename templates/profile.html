@@ -371,11 +371,13 @@ function fetchJobs() {
 
                 if (job.status === "success") badge = "success";
                 else if (job.status === "failed") badge = "danger";
-                else if (job.status === "processing") badge = "warning";
+                else if (job.status === "processing") badge = "primary";
+                else if (job.status === "pending") badge = "info";
+                else if (job.status === "retrying") badge = "warning";
 
                 html += `
                 <tr>
-                    <td>${job.work}</td>
+                    <td class="fw-medium">${job.work}</td>
                     <td>${job.info}</td>
                     <td><span class="badge text-bg-${badge}">${job.status}</span></td>
                     <td>${job.retries}</td>
@@ -383,6 +385,7 @@ function fetchJobs() {
                     <td>${job.date}</td>
                 </tr>`;
             });
+
 
             tbody.innerHTML = html;
 

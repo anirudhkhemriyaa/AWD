@@ -1,8 +1,8 @@
-from django.core.management.base import BaseCommand , CommandError
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 import csv
 from Data_entry.utils import check_csv_error
 from Email.models import List
-
 
 
 #=========================Import Command giving data to db===========================
@@ -15,7 +15,6 @@ class Command(BaseCommand):
         parser.add_argument('model_name', type=str)
         parser.add_argument('--list_id', type=int, default=None)
         parser.add_argument("--user_id", type=int, required=True)
-    
 
     def handle(self, *args, **options):
         from django.contrib.auth import get_user_model
@@ -34,14 +33,21 @@ class Command(BaseCommand):
                 raise CommandError("Subscriber import requires --list_id")
             email_list = List.objects.get(id=list_id)
 
+        model_field_names = {f.name for f in model._meta.fields}
 
+        instances = []
         with open(file_path, 'r', encoding='utf-8-sig', errors='ignore') as file:
             reader = csv.DictReader(file)
 
             for row in reader:
-                row["user"] = user 
-                if model_name == "subscriber":
+                if "user" in model_field_names:
+                    row["user"] = user
+                if model_name == "subscriber" and email_list:
                     row["email_list"] = email_list
-                model.objects.create(**row)
+                instances.append(model(**row))
 
-        self.stdout.write(self.style.SUCCESS("Your file data is inserted"))
+        with transaction.atomic():
+            model.objects.bulk_create(instances, batch_size=500)
+
+        self.stdout.write(self.style.SUCCESS(f"Successfully imported {len(instances)} records into {model_name}"))
+

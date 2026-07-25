@@ -12,35 +12,44 @@ class Command(BaseCommand):
         parser.add_argument("--user_id", type=int, required=True)
         parser.add_argument("--file_path", type=str, required=True)
 
-    def handle(self , *args, **kwargs):
+    def handle(self, *args, **kwargs):
         from django.contrib.auth import get_user_model
         User = get_user_model()
 
         user = User.objects.get(id=kwargs["user_id"])
-        model_name = kwargs['model_name'].capitalize()
+        model_name = kwargs['model_name'].strip()
 
         model = None
         for app_config in apps.get_app_configs():
-            try:
-                model = apps.get_model(app_config.label , model_name)
+            for m in app_config.get_models():
+                if m.__name__.lower() == model_name.lower():
+                    model = m
+                    break
+            if model:
                 break
-            except LookupError:
-                pass
 
         if model is None:
             raise CommandError(f"Model {model_name} not found")
 
-        dataset = model.objects.filter(user=user)
+        fields = [field for field in model._meta.fields]
+        field_names = [f.name for f in fields]
+
+        if "user" in field_names:
+            dataset = model.objects.filter(user=user)
+        else:
+            dataset = model.objects.all()
 
         file_path = kwargs["file_path"]
 
-
-        with open(file_path , 'w' , newline='') as file:
+        with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
+            writer.writerow(field_names)
 
-            writer.writerow([field.name for field in model._meta.fields])
-  
             for data in dataset:
-                writer.writerow(getattr(data , field.name) for field in model._meta.fields)
+                row = []
+                for field in fields:
+                    val = getattr(data, field.name)
+                    row.append(str(val) if val is not None else "")
+                writer.writerow(row)
 
-        self.stdout.write(self.style.SUCCESS("Data extracted successfully"))    
+        self.stdout.write(self.style.SUCCESS(f"Data extracted successfully to {file_path}"))

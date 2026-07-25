@@ -1,184 +1,309 @@
-{% extends "layout.html" %} {% block title %}Import Data | MyApp{% endblock %}
+{% extends "layout.html" %}
+
+{% block title %}
+Import Data
+{% endblock %}
+
 {% block content %}
 
-<!-- PAGE HEADER -->
 <div class="text-center mb-5">
-  <h2 class="fw-semibold">Import Data</h2>
-  <p class="text-secondary mb-0">
-    Upload a CSV file and map it safely to your database.
-  </p>
+
+<h1 class="section-title">
+
+Import Data
+
+</h1>
+
+<p class="section-subtitle">
+
+Upload a CSV file and import it into your database safely.
+
+</p>
+
 </div>
 
-<div class="row justify-content-center">
-  <div class="col-lg-10">
-    <div class="row g-4">
-      <!-- LEFT: UPLOAD -->
-      <div class="col-md-5">
-        <div class="card bg-dark border border-secondary rounded-4 h-100">
-          <div class="card-body p-4">
-            <h5 class="text-light mb-3">Upload File</h5>
-            <p class="text-secondary small mb-4">
-              Choose a CSV file and the target model to import into.
-            </p>
+<div class="row g-4">
 
-            <form
-              action="{% url 'home' %}"
-              method="post"
-              enctype="multipart/form-data"
-            >
-              {% csrf_token %}
+<div class="col-lg-5">
 
-              <div class="mb-4">
-                <label class="form-label text-light fw-medium">
-                  CSV File
-                </label>
-                <input
-                  type="file"
-                  class="form-control bg-dark text-light border-secondary"
-                  name="file_name"
-                  required
-                />
-              </div>
+<div class="card">
 
-              <div class="mb-4">
-                <label class="form-label text-light fw-medium">
-                  Target Model
-                </label>
-                <select
-                  class="form-select bg-dark text-light border-secondary"
-                  required
-                  name="model_name"
-                  id="model-select"
-                >
-                  <option disabled selected class="text-secondary">
-                    Select a model
-                  </option>
+<div class="card-body p-4">
 
-                  {% for model in models %}
-                  <option value="{{ model }}">{{ model }}</option>
-                  {% endfor %}
-                </select>
+<h5 class="fw-semibold mb-4">
 
-                <div
-                  id="subscriber-list-wrapper"
-                  class="mt-3"
-                  style="display: none"
-                >
-                  <label class="form-label text-light"
-                    >Choose Subscriber List</label
-                  >
-                  <select
-                    name="subscriber_list"
-                    class="form-select bg-dark text-light border-secondary"
-                  >
-                    <option disabled selected>Select a list</option>
-                    {% for l in subscriber_lists %}
-                    <option value="{{ l.id }}">{{ l.email_list }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
+Upload
 
-              <button class="btn btn-info text-dark w-100 fw-medium">
-                Validate & Import
-              </button>
+</h5>
 
-              <div class="mt-3">{% include "alerts.html" %}</div>
-            </form>
-          </div>
-        </div>
-      </div>
+<form action="{% url 'home' %}" method="POST" enctype="multipart/form-data">
 
-      <!-- RIGHT: GUIDANCE -->
-      <div class="col-md-7">
-        <div class="card bg-dark border border-secondary rounded-4 h-100">
-          <div class="card-body p-4">
-            <h5 class="text-light mb-3">Before You Import</h5>
-            <p class="text-secondary small mb-4">
-              Incorrect files can corrupt data or fail silently. Follow these
-              rules to avoid errors.
-            </p>
+{% csrf_token %}
 
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <div class="border border-secondary rounded-3 p-3 h-100">
-                  <h6 class="text-info mb-2">File Rules</h6>
-                  <ul class="text-secondary small mb-0">
-                    <li>First row must be headers</li>
-                    <li>Headers must match fields</li>
-                    <li>No empty columns</li>
-                    <li>UTF-8 encoding</li>
-                    <li>.csv only</li>
-                  </ul>
-                </div>
-              </div>
+<div class="mb-4">
 
-              <div class="col-md-6">
-                <div class="border border-secondary rounded-3 p-3 h-100">
-                  <h6 class="text-info mb-2">Data Rules</h6>
-                  <ul class="text-secondary small mb-0">
-                    <li>No duplicate primary keys</li>
-                    <li>Foreign keys must exist</li>
-                    <li>Dates: YYYY-MM-DD</li>
-                    <li>Numbers without commas</li>
-                    <li>No merged cells</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+<label class="form-label">
 
-            <hr class="border-secondary" />
+CSV File
 
-            <h6 class="text-light mb-2">Example CSV</h6>
+</label>
 
-            <div class="table-responsive">
-              <table
-                class="table table-dark table-bordered small align-middle mb-0"
-              >
-                <thead class="table-secondary text-dark">
-                  <tr>
-                    <th>id</th>
-                    <th>name</th>
-                    <th>email</th>
-                    <th>phone</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>john@example.com</td>
-                    <td>9876543210</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jane Smith</td>
-                    <td>jane@example.com</td>
-                    <td>9123456780</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<input
+type="file"
+class="form-control"
+required
+name="file_name">
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Target Model
+
+</label>
+
+<select
+class="form-select"
+required
+id="model-select"
+name="model_name">
+
+<option selected disabled>
+
+Choose Model
+
+</option>
+
+{% for model in models %}
+
+<option value="{{model}}">
+
+{{model}}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+<div id="subscriber-list-wrapper" class="mb-4" style="display:none;">
+
+<label class="form-label">
+
+Subscriber List
+
+</label>
+
+<select
+name="subscriber_list"
+class="form-select">
+
+<option selected disabled>
+
+Select List
+
+</option>
+
+{% for l in subscriber_lists %}
+
+<option value="{{l.id}}">
+
+{{l.email_list}}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+<button class="btn btn-black w-100">
+
+Validate & Import
+
+</button>
+
+<div class="mt-4">
+
+{% include "alerts.html" %}
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-7">
+
+<div class="card">
+
+<div class="card-body p-4">
+
+<h5 class="fw-semibold">
+
+Import Guidelines
+
+</h5>
+
+<p class="small-muted mb-4">
+
+Review these recommendations before importing your data.
+
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+
+<div class="border rounded-3 p-4 h-100">
+
+<h6 class="fw-semibold mb-3">
+
+File Requirements
+
+</h6>
+
+<ul class="small-muted mb-0">
+
+<li>CSV format only</li>
+
+<li>UTF-8 encoding</li>
+
+<li>Headers required</li>
+
+<li>No blank columns</li>
+
+<li>Field names must match</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="border rounded-3 p-4 h-100">
+
+<h6 class="fw-semibold mb-3">
+
+Validation
+
+</h6>
+
+<ul class="small-muted mb-0">
+
+<li>No duplicate IDs</li>
+
+<li>Foreign keys valid</li>
+
+<li>YYYY-MM-DD dates</li>
+
+<li>Numbers without commas</li>
+
+<li>No merged cells</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<hr class="my-5">
+
+<h6 class="fw-semibold mb-3">
+
+CSV Preview
+
+</h6>
+
+<div class="table-responsive">
+
+<table class="table table-bordered align-middle">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Email</th>
+
+<th>Phone</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>1</td>
+
+<td>John Doe</td>
+
+<td>john@example.com</td>
+
+<td>9876543210</td>
+
+</tr>
+
+<tr>
+
+<td>2</td>
+
+<td>Jane Smith</td>
+
+<td>jane@example.com</td>
+
+<td>9123456780</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const modelSelect = document.getElementById("model-select");
-    const listWrapper = document.getElementById("subscriber-list-wrapper");
 
-    modelSelect.addEventListener("change", function () {
-      if (this.value === "Subscriber") {
-        listWrapper.style.display = "block";
-      } else {
-        listWrapper.style.display = "none";
-      }
-    });
-  });
+document.addEventListener("DOMContentLoaded",()=>{
+
+const model=document.getElementById("model-select");
+
+const list=document.getElementById("subscriber-list-wrapper");
+
+model.addEventListener("change",()=>{
+
+list.style.display=model.value==="Subscriber"?"block":"none";
+
+});
+
+});
+
 </script>
 
 {% endblock %}

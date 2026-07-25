@@ -1,110 +1,86 @@
-{% extends "base.html" %} {% load crispy_forms_tags %} {% block title %}Register
-| MyApp{% endblock %} {% block content %}
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
 
-<style>
-  .form-control,
-  .form-select {
-    background-color: #111 !important;
-    color: #f8f9fa !important;
-    border: 1px solid #444 !important;
-  }
+{% block title %}Register | AWM{% endblock %}
 
-  .form-control::placeholder {
-    color: #888 !important;
-  }
+{% block content %}
 
-  .form-control:focus,
-  .form-select:focus {
-    background-color: #000 !important;
-    color: #fff !important;
-    border-color: #0dcaf0 !important;
-    box-shadow: 0 0 0 0.15rem rgba(13, 202, 240, 0.25) !important;
-  }
+<div class="row justify-content-center">
 
-  .form-label {
-    color: #adb5bd !important;
-  }
-
-  .is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* Django default help text */
-  .form-text,
-  .helptext,
-  small.text-muted {
-    color: #9ca3af !important; /* soft light gray */
-    font-size: 0.8rem;
-    margin-top: 4px;
-    display: block;
-  }
-</style>
-
-<div class="container mt-5">
-  <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10">
-      <div class="card bg-dark border border-secondary rounded-4 shadow">
-        <div class="card-body p-5">
-          <!-- Header -->
-          <div class="row mb-4">
-            <div class="col text-center">
-              <h2 class="fw-semibold text-light">Create Account</h2>
-              <p class="text-secondary small mb-0">
-                Set up your access in a few steps
-              </p>
-            </div>
-          </div>
 
-          <form action="{% url 'register' %}" method="POST">
-            {% csrf_token %}
+        <div class="card">
 
-            <!-- Grid layout -->
-            <div class="row g-3 text-light">
-              {% for field in form %}
-              <div class="col-md-6">{{ field|as_crispy_field }}</div>
-              {% endfor %}
+            <div class="card-body p-5">
+
+                <div class="text-center mb-5">
+
+                    <h1 class="section-title mb-2">
+                        Create Account
+                    </h1>
+
+                    <p class="section-subtitle mb-0">
+                        Create your workspace to start importing, exporting, and managing data.
+                    </p>
+
+                </div>
+
+                <form action="{% url 'register' %}" method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="row g-4">
+
+                        {% for field in form %}
+
+                        <div class="col-md-6">
+
+                            {{ field|as_crispy_field }}
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-black w-100 mt-5"
+                    >
+                        Create Account
+                    </button>
+
+                </form>
+
+                <div class="mt-4">
+
+                    {% include "alerts.html" %}
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+
+                    <span class="small-muted">
+                        Already have an account?
+                    </span>
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="fw-semibold text-dark text-decoration-none ms-1"
+                    >
+                        Sign In
+                    </a>
+
+                </div>
+
             </div>
 
-            <div class="d-grid mt-4">
-              <button type="submit" class="btn btn-info text-dark fw-medium">
-                Register
-              </button>
-            </div>
-
-            <div class="text-center mt-4">
-              <span class="text-secondary small">
-                Already have an account?
-              </span>
-              <a
-                href="{% url 'login' %}"
-                class="text-info text-decoration-none fw-medium ms-1"
-              >
-                Login
-              </a>
-            </div>
-
-            {% if messages %}
-            <div class="mt-3">
-              {% for message in messages %}
-              <div
-                class="alert bg-black text-white border border-secondary alert-dismissible fade show"
-                role="alert"
-              >
-                {{ message }}
-                <button
-                  type="button"
-                  class="btn-close btn-close-white"
-                  data-bs-dismiss="alert"
-                ></button>
-              </div>
-              {% endfor %}
-            </div>
-            {% endif %}
-          </form>
         </div>
-      </div>
+
     </div>
-  </div>
+
 </div>
 
 {% endblock %}

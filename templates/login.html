@@ -1,121 +1,74 @@
-{% extends "base.html" %} {% load crispy_forms_tags %} {% block title %}Login |
-MyApp{% endblock %} {% block content %}
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
 
-<style>
-  /* Dark input theme */
-  .form-control,
-  .form-select {
-    background-color: #111 !important;
-    color: #f8f9fa !important;
-    border: 1px solid #444 !important;
-  }
+{% block title %}Login | AWM{% endblock %}
 
-  /* Placeholder text */
-  .form-control::placeholder {
-    color: #888 !important;
-  }
+{% block content %}
 
-  /* Focus state */
-  .form-control:focus,
-  .form-select:focus {
-    background-color: #000 !important;
-    color: #fff !important;
-    border-color: #0dcaf0 !important;
-    box-shadow: 0 0 0 0.15rem rgba(13, 202, 240, 0.25) !important;
-  }
+<div class="row justify-content-center">
 
-  /* Labels */
-  .form-label {
-    color: #adb5bd !important;
-  }
+    <div class="col-lg-5 col-md-7">
 
-  /* Invalid fields */
-  .is-invalid {
-    border-color: #dc3545 !important;
-  }
-</style>
+        <div class="card">
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <div class="card bg-dark border border-secondary rounded-4 shadow">
-        <div class="card-body p-5">
-          <div class="row align-items-center">
-            <!-- LEFT INFO PANEL -->
-            <div
-              class="col-md-5 d-none d-md-block border-end border-secondary pe-4"
-            >
-              <h4 class="text-light fw-semibold">MyApp</h4>
-              <p class="text-secondary small mt-2">
-                Your workspace for focused productivity.
-              </p>
+            <div class="card-body p-5">
 
-              <ul class="list-unstyled small text-secondary mt-4">
-                <li class="mb-2">✔ Secure authentication</li>
-                <li class="mb-2">✔ Personal dashboard</li>
-                <li class="mb-2">✔ Access anywhere</li>
-              </ul>
+                <div class="text-center mb-5">
 
-              <p class="text-secondary small mt-4">
-                Sign in to continue where you left off.
-              </p>
-            </div>
+                    <h1 class="section-title mb-2">
+                        Welcome Back
+                    </h1>
 
-            <!-- RIGHT FORM PANEL -->
-            <div class="col-md-7 ps-md-5">
-              <div class="text-center mb-4">
-                <h2 class="fw-semibold text-light">Welcome Back</h2>
-                <p class="text-secondary small mb-0">Sign in to continue</p>
-              </div>
+                    <p class="section-subtitle mb-0">
+                        Sign in to access your workspace.
+                    </p>
 
-              <form action="{% url 'login' %}" method="POST">
-                {% csrf_token %}
+                </div>
 
-                <div class="text-light">{{ form|crispy }}</div>
+                <form action="{% url 'login' %}" method="POST">
 
-                <button
-                  type="submit"
-                  class="btn btn-info text-dark w-100 fw-medium mt-3"
-                >
-                  Login
-                </button>
+                    {% csrf_token %}
 
-                {% if messages %}
-                <div class="mt-3">
-                  {% for message in messages %}
-                  <div
-                    class="alert bg-black text-white border border-secondary alert-dismissible fade show"
-                    role="alert"
-                  >
-                    {{ message }}
+                    {{ form|crispy }}
+
                     <button
-                      type="button"
-                      class="btn-close btn-close-white"
-                      data-bs-dismiss="alert"
-                    ></button>
-                  </div>
-                  {% endfor %}
-                </div>
-                {% endif %}
+                        type="submit"
+                        class="btn btn-black w-100 mt-4"
+                    >
+                        Sign In
+                    </button>
 
-                <div class="text-center mt-4">
-                  <span class="text-secondary small">
-                    Don’t have an account?
-                  </span>
-                  <a
-                    href="{% url 'register' %}"
-                    class="text-info text-decoration-none fw-medium ms-1"
-                  >
-                    Register
-                  </a>
+                </form>
+
+                <div class="mt-4">
+
+                    {% include "alerts.html" %}
+
                 </div>
-              </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+
+                    <span class="small-muted">
+                        Don't have an account?
+                    </span>
+
+                    <a
+                        href="{% url 'register' %}"
+                        class="fw-semibold text-dark text-decoration-none ms-1"
+                    >
+                        Create Account
+                    </a>
+
+                </div>
+
             </div>
-          </div>
+
         </div>
-      </div>
+
     </div>
-  </div>
+
 </div>
 
 {% endblock %}

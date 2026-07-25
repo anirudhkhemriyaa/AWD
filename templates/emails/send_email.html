@@ -1,41 +1,155 @@
-{% extends "base.html" %} {% load static %} {% block title %}Send Email |
-MyApp{% endblock %} {% block content %}
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Send Email | AWM{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
 
 <div class="text-center mb-5">
-  <h2 class="fw-semibold">Send Bulk Email</h2>
-  <p class="text-secondary">Compose and send emails to multiple recipients.</p>
+
+    <h1 class="section-title">
+        Send Bulk Email
+    </h1>
+
+    <p class="section-subtitle">
+        Create and send an email campaign to your selected recipients.
+    </p>
+
 </div>
 
-<!-- CKEditor Scripts -->
+<!-- CKEditor -->
+
 <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card bg-dark border border-secondary rounded-4">
-      <div class="card-body p-4">
-        <form
-          action="{% url 'send_email' %}"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          {% csrf_token %}
+<div class="row g-4">
 
-          <!-- Form wrapper to enforce dark text -->
-          <div class="text-light">{{ form.as_p }}</div>
+    <!-- Email Form -->
 
-          <button
-            type="submit"
-            class="btn btn-light text-dark w-100 fw-medium mt-3"
-          >
-            Proceed
-          </button>
+    <div class="col-lg-8">
 
-          <div class="mt-4">{% include "alerts.html" %}</div>
-        </form>
-      </div>
+        <div class="card">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-2">
+                    Compose Email
+                </h5>
+
+                <p class="small-muted mb-4">
+                    Fill in the campaign details below before sending.
+                </p>
+
+                <form
+                    action="{% url 'send_email' %}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button
+                        type="submit"
+                        class="btn btn-black w-100 mt-4"
+                    >
+                        Send Email
+                    </button>
+
+                    <div class="mt-4">
+
+                        {% include "alerts.html" %}
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
     </div>
-  </div>
+
+
+    <!-- Guidelines -->
+
+    <div class="col-lg-4">
+
+        <div class="card h-100">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Before Sending
+                </h5>
+
+                <div class="mb-4">
+
+                    <h6 class="fw-semibold mb-2">
+                        Recipients
+                    </h6>
+
+                    <ul class="small-muted mb-0">
+
+                        <li>Select the correct subscriber list.</li>
+
+                        <li>Verify recipient count.</li>
+
+                        <li>Remove inactive contacts.</li>
+
+                    </ul>
+
+                </div>
+
+                <hr>
+
+                <div class="mb-4">
+
+                    <h6 class="fw-semibold mb-2">
+                        Content
+                    </h6>
+
+                    <ul class="small-muted mb-0">
+
+                        <li>Use a clear subject line.</li>
+
+                        <li>Proofread before sending.</li>
+
+                        <li>Check links and attachments.</li>
+
+                    </ul>
+
+                </div>
+
+                <hr>
+
+                <div>
+
+                    <h6 class="fw-semibold mb-2">
+                        Delivery
+                    </h6>
+
+                    <ul class="small-muted mb-0">
+
+                        <li>Emails are processed in the background.</li>
+
+                        <li>Track campaign status from the Tracking page.</li>
+
+                        <li>Large campaigns may take several minutes.</li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

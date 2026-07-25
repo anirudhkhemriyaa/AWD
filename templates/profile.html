@@ -1,240 +1,396 @@
-{% extends "base.html" %} {% block title %}Profile | MyApp{% endblock %} {%block content %}
-<div class="container py-5">
-  <!-- Header -->
-  <div class="d-flex flex-wrap justify-content-between align-items-center mb-5">
+{% extends "layout.html" %}
+
+{% block title %}Profile | AWM{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-5">
+
     <div>
-      <h2 class="fw-semibold text-light mb-1">Company Profile</h2>
-      <p class="text-secondary small mb-0">Account & business information</p>
-    </div>
-    <div class="d-flex gap-2 mt-3 mt-md-0">
-      <a href="{% url 'base' %}" class="btn btn-outline-light btn-sm">
-        Dashboard
-      </a>
-      <a href="{% url 'profile_edit' %}" class="btn btn-outline-info btn-sm">
-        Edit Profile
-      </a>
 
-      <a href="{% url 'logout' %}" class="btn btn-danger btn-sm"> Logout </a>
-    </div>
-  </div>
+        <h1 class="section-title mb-1">
+            Company Profile
+        </h1>
 
-  <!-- TOP CARDS -->
-  <div class="row g-4 mb-5">
-    <!-- Account -->
-    <div class="col-md-4">
-      <div class="card h-100">
-        <div class="card-body p-4">
-          <h6 class="text-uppercase text-secondary small mb-4">Account</h6>
+        <p class="section-subtitle mb-0">
+            View your account, subscription, and recent activity.
+        </p>
 
-          <div class="mb-3">
-            <div class="text-secondary small">Username</div>
-            <div class="fw-medium text-light">{{ request.user.username }}</div>
-          </div>
-
-          <div class="mb-3">
-            <div class="text-secondary small">Email</div>
-            <div class="fw-medium text-light">{{ request.user.email }}</div>
-          </div>
-
-          <div>
-            <div class="text-secondary small">Phone</div>
-            <div class="fw-medium text-light">{{ profile.phone }}</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- Company -->
-    <div class="col-md-8">
-      <div class="card h-100">
-        <div class="card-body p-4">
-          <h6 class="text-uppercase text-secondary small mb-4">Company</h6>
+    <div class="d-flex gap-2 mt-3 mt-lg-0">
 
-          <div class="row g-3">
-            <div class="col-12">
-              <div class="text-secondary small">Company Name</div>
-              <div class="fw-medium text-light">
-                {{ profile.Name_of_Company }}
-              </div>
-            </div>
+        <a href="{% url 'base' %}" class="btn btn-outline-dark">
+            Dashboard
+        </a>
 
-            <div class="col-md-6">
-              <div class="text-secondary small">Person in Charge</div>
-              <div class="fw-medium text-light">
-                {{ profile.Name_of_Encharge }}
-              </div>
-            </div>
+        <a href="{% url 'profile_edit' %}" class="btn btn-outline-dark">
+            Edit Profile
+        </a>
 
-            <div class="col-md-6">
-              <div class="text-secondary small">Company Size</div>
-              <div class="fw-medium text-light">
-                {{ profile.get_company_size_display }}
-              </div>
-            </div>
+        <a href="{% url 'logout' %}" class="btn btn-black">
+            Logout
+        </a>
 
-            <div class="col-md-6">
-              <div class="text-secondary small">Sector</div>
-              <div class="fw-medium text-light">{{ profile.Sector }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- SUBSCRIPTION -->
+</div>
+
+
+
+<!-- Account & Company -->
+
 <div class="row g-4 mb-5">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body p-4">
 
-        <h6 class="text-uppercase text-secondary small mb-4">
-          Subscription
-        </h6>
+    <div class="col-lg-4">
+
+        <div class="card h-100">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Account
+                </h5>
+
+                <div class="mb-4">
+                    <div class="small-muted">Username</div>
+                    <div class="fw-medium">{{ request.user.username }}</div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="small-muted">Email</div>
+                    <div class="fw-medium">{{ request.user.email }}</div>
+                </div>
+
+                <div>
+                    <div class="small-muted">Phone</div>
+                    <div class="fw-medium">{{ profile.phone }}</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-8">
+
+        <div class="card h-100">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Company Information
+                </h5>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+
+                        <div class="small-muted">
+                            Company Name
+                        </div>
+
+                        <div class="fw-medium">
+                            {{ profile.Name_of_Company }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="small-muted">
+                            Person in Charge
+                        </div>
+
+                        <div class="fw-medium">
+                            {{ profile.Name_of_Encharge }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="small-muted">
+                            Company Size
+                        </div>
+
+                        <div class="fw-medium">
+                            {{ profile.get_company_size_display }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="small-muted">
+                            Sector
+                        </div>
+
+                        <div class="fw-medium">
+                            {{ profile.Sector }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Subscription -->
+
+<div class="card mb-5">
+
+    <div class="card-body p-4">
+
+        <h5 class="fw-semibold mb-4">
+            Subscription
+        </h5>
 
         {% if subscription and subscription.is_valid %}
 
-        <div class="row g-3">
+        <div class="row g-4 mb-4">
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Plan</div>
-            <div class="fw-medium text-light">
-              {{ subscription.plan.name }}
+            <div class="col-md-4">
+
+                <div class="small-muted">
+                    Plan
+                </div>
+
+                <div class="fw-medium">
+                    {{ subscription.plan.name }}
+                </div>
+
             </div>
-          </div>
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Valid Until</div>
-            <div class="fw-medium text-light">
-              {{ subscription.end_date|date:"M d, Y" }}
+            <div class="col-md-4">
+
+                <div class="small-muted">
+                    Valid Until
+                </div>
+
+                <div class="fw-medium">
+                    {{ subscription.end_date|date:"M d, Y" }}
+                </div>
+
             </div>
-          </div>
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Status</div>
-            <span class="badge bg-success">Active</span>
-          </div>
+            <div class="col-md-4">
+
+                <div class="small-muted">
+                    Status
+                </div>
+
+                <span class="badge text-bg-success">
+                    Active
+                </span>
+
+            </div>
 
         </div>
 
-        <hr class="border-secondary my-4">
+        <hr>
 
-        <div class="row g-3">
+        <div class="row g-4">
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Emails Today</div>
-            <div class="fw-medium text-light">
-              {{ remaining.emails_left }} / {{ subscription.plan.email_limit_per_day }} left
+            <div class="col-md-4">
+
+                <div class="small-muted">
+                    Emails Remaining
+                </div>
+
+                <div class="fw-medium">
+                    {{ remaining.emails_left }} / {{ subscription.plan.email_limit_per_day }}
+                </div>
+
             </div>
-          </div>
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Imports Today</div>
-            <div class="fw-medium text-light">
-              {{ remaining.imports_left }} / {{ subscription.plan.import_limit_per_day }} left
-            </div>
-          </div>
+            <div class="col-md-4">
 
-          <div class="col-md-4">
-            <div class="text-secondary small">Exports Today</div>
-            <div class="fw-medium text-light">
-              {{ remaining.exports_left }} / {{ subscription.plan.export_limit_per_day }} left
+                <div class="small-muted">
+                    Imports Remaining
+                </div>
+
+                <div class="fw-medium">
+                    {{ remaining.imports_left }} / {{ subscription.plan.import_limit_per_day }}
+                </div>
+
             </div>
-          </div>
+
+            <div class="col-md-4">
+
+                <div class="small-muted">
+                    Exports Remaining
+                </div>
+
+                <div class="fw-medium">
+                    {{ remaining.exports_left }} / {{ subscription.plan.export_limit_per_day }}
+                </div>
+
+            </div>
 
         </div>
 
         {% else %}
-        <div class="text-danger">
-          No active subscription.
+
+        <div class="alert alert-warning mb-0">
+            No active subscription.
         </div>
+
         {% endif %}
 
-      </div>
     </div>
-  </div>
+
 </div>
 
 
-  <!-- ACTIVITY -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">Recent Activity & Workflow Status</h5>
-    <div class="d-flex text-secondary small gap-3">
-      <span><strong id="metric-total" class="text-light">0</strong> Total Jobs</span>
-      <span><strong id="metric-failed" class="text-danger">0</strong> Failed</span>
-      <span>Avg Time: <strong id="metric-time" class="text-light">0s</strong></span>
-    </div>
-  </div>
 
-  <div class="card p-0 overflow-hidden mb-5">
-    <div class="table-responsive">
-      <table
-        class="table table-dark table-borderless table-hover align-middle mb-0"
-      >
-        <thead class="bg-secondary text-dark small">
-          <tr>
-            <th class="ps-4">Work / Tool</th>
-            <th>Info</th>
-            <th class="text-center">Status</th>
-            <th class="text-center">Retries</th>
-            <th class="text-center">Time</th>
-            <th class="text-end pe-4">Date</th>
-          </tr>
-        </thead>
-        <tbody id="jobs-tbody">
-          <!-- Dynamically populated via JS -->
-          <tr>
-            <td colspan="6" class="text-center text-secondary py-4">Loading job states...</td>
-          </tr>
-        </tbody>
-      </table>
+<!-- Activity -->
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+    <div>
+
+        <h4 class="fw-semibold mb-1">
+            Recent Activity
+        </h4>
+
+        <p class="small-muted mb-0">
+            Latest import, export, and email jobs.
+        </p>
+
     </div>
-  </div>
+
+    <div class="d-flex gap-4 mt-3 mt-lg-0">
+
+        <div>
+            <div class="small-muted">Jobs</div>
+            <strong id="metric-total">0</strong>
+        </div>
+
+        <div>
+            <div class="small-muted">Failed</div>
+            <strong id="metric-failed">0</strong>
+        </div>
+
+        <div>
+            <div class="small-muted">Average</div>
+            <strong id="metric-time">0s</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="card">
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>Work</th>
+
+                    <th>Details</th>
+
+                    <th>Status</th>
+
+                    <th>Retries</th>
+
+                    <th>Time</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="jobs-tbody">
+
+                <tr>
+
+                    <td colspan="6" class="text-center py-5 small-muted">
+
+                        Loading activity...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
 
 <script>
-  function fetchJobs() {
+function fetchJobs() {
     fetch("{% url 'jobs_api' %}")
-      .then(r => r.json())
-      .then(data => {
-        // Update metrics
-        document.getElementById("metric-total").innerText = data.metrics.total;
-        document.getElementById("metric-failed").innerText = data.metrics.failed;
-        document.getElementById("metric-time").innerText = data.metrics.avg_time;
+        .then(r => r.json())
+        .then(data => {
 
-        const tbody = document.getElementById("jobs-tbody");
-        if (data.jobs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-4">No activity yet.</td></tr>';
-            return;
-        }
+            document.getElementById("metric-total").innerText = data.metrics.total;
+            document.getElementById("metric-failed").innerText = data.metrics.failed;
+            document.getElementById("metric-time").innerText = data.metrics.avg_time;
 
-        let html = "";
-        data.jobs.forEach(job => {
-          let badgeClass = "bg-warning text-dark"; // processing/retrying/pending
-          let statusText = job.status.charAt(0).toUpperCase() + job.status.slice(1);
-          if (job.status === "success") badgeClass = "bg-success";
-          else if (job.status === "failed") badgeClass = "bg-danger";
+            const tbody = document.getElementById("jobs-tbody");
 
-          html += `
-            <tr class="border-bottom border-secondary">
-              <td class="ps-4 fw-semibold">${job.work}</td>
-              <td class="text-secondary">${job.info}</td>
-              <td class="text-center">
-                <span class="badge rounded-pill ${badgeClass} px-3">${statusText}</span>
-              </td>
-              <td class="text-center text-secondary">${job.retries}</td>
-              <td class="text-center text-secondary">${job.time}</td>
-              <td class="text-end pe-4 text-secondary">${job.date}</td>
-            </tr>
-          `;
+            if (data.jobs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-5 small-muted">
+                            No recent activity.
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            let html = "";
+
+            data.jobs.forEach(job => {
+
+                let badge = "secondary";
+
+                if (job.status === "success") badge = "success";
+                else if (job.status === "failed") badge = "danger";
+                else if (job.status === "processing") badge = "warning";
+
+                html += `
+                <tr>
+                    <td>${job.work}</td>
+                    <td>${job.info}</td>
+                    <td><span class="badge text-bg-${badge}">${job.status}</span></td>
+                    <td>${job.retries}</td>
+                    <td>${job.time}</td>
+                    <td>${job.date}</td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+
         });
-        tbody.innerHTML = html;
-      })
-      .catch(e => console.error("Error fetching jobs:", e));
-  }
+}
 
-  // Initial fetch and poll every 3 seconds
-  fetchJobs();
-  setInterval(fetchJobs, 3000);
+fetchJobs();
+setInterval(fetchJobs,3000);
 </script>
+
 {% endblock %}

@@ -1,69 +1,163 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %}
 
-<div class="container">
-  <div class="text-center mb-5">
-    <h2 class="fw-semibold">Tracking Statistics</h2>
-    <p class="text-secondary">Detailed performance and content overview</p>
-  </div>
+{% block title %}Tracking Statistics | AWM{% endblock %}
 
-  <div class="row justify-content-center">
-    <div class="col-md-9">
-      <div class="card bg-dark border border-secondary rounded-2">
-        <!-- HEADER / SUMMARY -->
-        <div class="card-header bg-dark border-bottom border-secondary">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <div class="fw-medium text-light">
-                Total Sent: {{ total_sent.count }}
-              </div>
-              <div class="text-secondary small">
-                Sent at {{ email.sent_at }}
-              </div>
+{% block content %}
+
+<!-- Header -->
+
+<div class="text-center mb-5">
+
+    <h1 class="section-title">
+        Campaign Details
+    </h1>
+
+    <p class="section-subtitle">
+        Review delivery statistics and email content.
+    </p>
+
+</div>
+
+
+
+<!-- Summary Cards -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+
+        <div class="card">
+
+            <div class="card-body text-center p-4">
+
+                <div class="small-muted mb-2">
+                    Emails Sent
+                </div>
+
+                <h2 class="fw-bold mb-0">
+                    {{ total_sent.count }}
+                </h2>
+
             </div>
 
-            <div class="col-md-6 text-md-end mt-3 mt-md-0">
-              <div class="fw-medium text-light">
-                Opened {{ email.open_rate }}%
-              </div>
-              <div class="fw-medium text-light">
-                Clicked {{ email.click_rate }}%
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- BODY -->
-        <div class="card-body p-4">
-          <!-- Subject -->
-          <div class="mb-4">
-            <h5 class="fw-semibold text-light mb-1">{{ email.subject }}</h5>
-            <div class="text-secondary small">Email subject</div>
-          </div>
-
-          <!-- Email content -->
-          <div class="border-top border-secondary pt-4">
-            <div class="text-light">{{ email.body|safe }}</div>
-          </div>
-
-          <!-- Attachment -->
-          {% if email.attachment %}
-          <div
-            class="border-top border-secondary pt-4 mt-4 d-flex justify-content-between align-items-center"
-          >
-            <div class="text-secondary small">Attachment included</div>
-            <a
-              href="{{ email.attachment.url }}"
-              target="_blank"
-              class="btn btn-sm btn-outline-light"
-            >
-              View Attachment
-            </a>
-          </div>
-          {% endif %}
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="col-md-4">
+
+        <div class="card">
+
+            <div class="card-body text-center p-4">
+
+                <div class="small-muted mb-2">
+                    Open Rate
+                </div>
+
+                <h2 class="fw-bold mb-0">
+                    {{ email.open_rate }}%
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card">
+
+            <div class="card-body text-center p-4">
+
+                <div class="small-muted mb-2">
+                    Click Rate
+                </div>
+
+                <h2 class="fw-bold mb-0">
+                    {{ email.click_rate }}%
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Email Details -->
+
+<div class="card">
+
+    <div class="card-body p-5">
+
+        <div class="mb-5">
+
+            <div class="small-muted mb-2">
+                Subject
+            </div>
+
+            <h3 class="fw-semibold mb-3">
+                {{ email.subject }}
+            </h3>
+
+            <div class="small-muted">
+                Sent on {{ email.sent_at }}
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="my-5">
+
+            <div class="small-muted mb-3">
+                Email Content
+            </div>
+
+            <div class="email-content">
+
+                {{ email.body|safe }}
+
+            </div>
+
+        </div>
+
+        {% if email.attachment %}
+
+        <hr>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+
+            <div>
+
+                <div class="small-muted">
+                    Attachment
+                </div>
+
+                <div class="fw-medium">
+                    File attached to this campaign
+                </div>
+
+            </div>
+
+            <a
+                href="{{ email.attachment.url }}"
+                target="_blank"
+                class="btn btn-outline-dark"
+            >
+                Download Attachment
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
 </div>
 
 {% endblock %}

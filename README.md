@@ -1,106 +1,102 @@
-## AWD – Data & Email Automation Platform
+# 📊 AWD — Data & Email Automation Platform
 
-AWD is a Django-based SaaS-style platform that helps organizations **import, manage, and export structured data** (such as employees and students) and **send tracked bulk emails** to their audiences.  
-It combines CSV-based data automation, subscription-aware usage limits, and email campaign tracking into a single, Dockerized stack that is easy to deploy.
+A Django-based platform for organizations to import/export structured business data (employees, students) and run tracked bulk email campaigns, with subscription-based usage limits and async background processing.
 
-### Why this is useful
-
-- **Centralized data operations**: Import and export business data (employees, students, etc.) through a web UI instead of brittle one-off scripts.
-- **Background processing at scale**: Heavy CSV imports/exports and email sends run asynchronously via Celery and Redis, keeping the UI responsive.
-- **Subscription & usage limits**: Per-user subscription plans with per‑day limits for imports, exports, and emails to control cost and abuse.
-- **Bulk emailing with tracking**: Create email lists, send campaigns, and measure open/click rates for each campaign.
-- **Production-ready stack**: Gunicorn, Nginx, PostgreSQL, Redis, and Django are wired together using Docker Compose for reproducible deployments.
-
----
-
-## Features
-
-- **User & company management**
-  - Custom user model with company details (sector, company size, contact info).
-  - Profile page with recent activity and subscription status.
-
-- **Data import & export**
-  - Upload CSV files for domain models (e.g. `Student`, `Employee` and others).
-  - Server-side validation of CSVs before processing.
-  - Asynchronous import/export jobs via Celery workers.
-  - History log for each job (success / failed / processing).
-
-- **Subscription & daily limits**
-  - `SubscriptionPlan` model to define pricing, duration, and per‑day limits.
-  - Per-user `UserSubscription` with validity checks.
-  - `DailyUsage` tracking for imports, exports, and emails.
-
-- **Email campaigns**
-  - Email lists (`List`) and subscribers (`Subscriber`).
-  - Rich HTML email editing using CKEditor.
-  - Bulk emails sent asynchronously via Celery.
-  - Open and click tracking (`EmailTracking`) with dashboards.
-  - Email delivery via Sendinblue (Anymail backend).
-
-- **AI-assisted content (optional)**
-  - Integration with Google Gemini API to assist with email content (configured via `GEMINI_API_KEY`).
-
-- **Modern stack & tooling**
-  - Django with a custom user model.
-  - PostgreSQL as the main database.
-  - Redis as Celery broker.
-  - Gunicorn as the WSGI server.
-  - Nginx as reverse proxy.
-  - Static files served via WhiteNoise.
-  - Fully Dockerized with `docker-compose.yml`.
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Gemini_API-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
 
 ---
 
-## Architecture Overview
+## ✨ Features
 
-The project is structured as a classic Django monolith with supporting services:
-
-- **Web (`web`)**
-  - Django application (`awd_main`) served by Gunicorn on port `8000`.
-  - Handles all HTTP requests, authentication, dashboards, and management UI.
-  - Serves static files via WhiteNoise and media files from `/app/media`.
-
-- **Celery worker (`celery`)**
-  - Processes background jobs for:
-    - CSV imports and exports.
-    - Bulk email sending.
-    - Email tracking related tasks.
-  - Uses Redis as the broker (`REDIS_URL`).
-
-- **PostgreSQL (`db`)**
-  - Main relational database for Django.
-  - Data persisted in a Docker volume `postgres_data`.
-
-- **Redis (`redis`)**
-  - Message broker for Celery.
-
-- **Nginx (`nginx`)**
-  - Reverse proxy listening on host port `80`.
-  - Forwards traffic to the `web` service on port `8000`.
-
-All services and their relationships are defined in `docker-compose.yml`.
+- **CSV data import/export** – Upload CSVs for domain models like `Student` and `Employee` through a web UI, with server-side validation before processing.
+- **Async job processing** – Imports, exports, and email sends run in the background via Celery so the UI stays responsive, with a history log tracking success/failed/processing states.
+- **Subscription-based usage limits** – Per-user `SubscriptionPlan` and `UserSubscription` records enforce per-day limits on imports, exports, and emails via `DailyUsage` tracking.
+- **Bulk email campaigns** – Build subscriber lists (`List`, `Subscriber`), compose HTML emails with CKEditor, and send them asynchronously through Sendinblue (via Anymail).
+- **Open/click tracking** – Each campaign is tracked via `EmailTracking`, with dashboards for engagement metrics.
+- **AI-assisted email content (optional)** – Google Gemini API integration to help draft email content when `GEMINI_API_KEY` is configured.
 
 ---
 
-## Prerequisites
+## 🏗️ Architecture
 
-- **Docker** (20.x or later recommended)
-- **Docker Compose**  
-  - Either the `docker compose` CLI (Docker v2+)  
-  - Or legacy `docker-compose` (v1.x)
+```mermaid
+flowchart TD
+    Client([Client Browser])
+    Nginx[Nginx :80]
+    Web[Django / Gunicorn :8000]
+    DB[(PostgreSQL)]
+    Redis[(Redis Broker)]
+    Celery[Celery Worker]
+    Sendinblue[Sendinblue - Anymail]
+    Gemini[Google Gemini API]
+    Media[/app/media - media_data volume/]
 
-You do **not** need to install Python or PostgreSQL locally if you using Docker.
+    Client -->|HTTP request| Nginx
+    Nginx -->|proxy_pass| Web
+    Web -->|read/write| DB
+    Web -->|enqueue import/export/email job| Redis
+    Redis -->|task pickup| Celery
+    Celery -->|process CSV, write results| DB
+    Celery -->|send campaign| Sendinblue
+    Sendinblue -->|open/click events| Celery
+    Celery -->|log EmailTracking| DB
+    Web -->|optional content assist| Gemini
+    Web -->|store/serve uploads| Media
+
+    style Web fill:#092E20,color:#fff
+    style DB fill:#4169E1,color:#fff
+    style Redis fill:#DC382D,color:#fff
+    style Celery fill:#37814A,color:#fff
+    style Nginx fill:#009639,color:#fff
+    style Sendinblue fill:#0092FF,color:#fff
+    style Gemini fill:#8E75B2,color:#fff
+```
+
+**How it flows:**
+
+1. The client hits Nginx on port 80, which reverse-proxies the request to the Django app running under Gunicorn on port 8000.
+2. Django handles auth, dashboards, and form submissions directly against PostgreSQL for standard reads/writes.
+3. CSV import/export jobs and bulk email sends are pushed onto Redis as Celery tasks instead of running inline.
+4. The Celery worker picks up the task, processes the CSV or sends the campaign through Sendinblue (via Anymail), and writes job status or `EmailTracking` results back to PostgreSQL.
+5. Optional AI-assisted email drafting calls the Gemini API directly from the web process; uploaded files and email attachments are stored in the `media_data` volume.
 
 ---
 
-## Configuration (.env)
+## 🛠️ Tech Stack
 
-The project expects a `.env` file at the project root. This file is:
+| Layer               | Technology                          |
+|----------------------|--------------------------------------|
+| Backend framework    | Django (custom user model)          |
+| WSGI server          | Gunicorn                            |
+| Reverse proxy        | Nginx                               |
+| Database             | PostgreSQL                          |
+| Task queue / broker  | Celery + Redis                      |
+| Static files         | WhiteNoise                          |
+| Rich text editing    | CKEditor                            |
+| Email delivery       | Sendinblue (via Anymail)            |
+| AI content assist    | Google Gemini API (optional)        |
+| Containerization     | Docker / Docker Compose             |
+| Config management    | python-decouple (`.env`)            |
 
-- Loaded by Django settings via `python-decouple`.
-- Loaded by Docker Compose for the `db`, `web`, and `celery` services.
+---
 
-Below is an example `.env` you can adapt:
+## 🚀 Run Locally / Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone <https://github.com/anirudhkhemriyaa/AWD.git> AWD
+cd AWD
+```
+
+### 2. Create the `.env` file
 
 ```env
 # --- Django ---
@@ -128,46 +124,23 @@ SENDINBLUE_API_KEY=your-sendinblue-api-key
 GEMINI_API_KEY=your-gemini-api-key
 ```
 
-> **Note**: Use strong, unique values for `SECRET_KEY` and `POSTGRES_PASSWORD` in any non-local environment.
-
----
-## ![System Design](docs/AWD-System.png)
-## Running the project with Docker
-
-### 1. Clone the repository
-
-```bash
-git clone <https://github.com/anirudhkhemriyaa/AWD.git> AWD
-cd AWD
-```
-
-### 2. Create the `.env` file
-
-Create a `.env` file at the project root using the example above and adjust values as needed.
-
 ### 3. Build the images
 
 ```bash
 docker compose build
 ```
 
-This will:
-
-- Build the Django/Gunicorn image using the `Dockerfile`.
-- Install dependencies from `requirements.txt`.
-- Collect static files via `python manage.py collectstatic --noinput`.
-
 ### 4. Run database migrations
-
-Run migrations inside the `web` container:
 
 ```bash
 docker compose run --rm web python manage.py migrate
 ```
 
+### 5. Create a superuser
 
-
-Follow the prompts to set up an admin account.
+```bash
+docker compose run --rm web python manage.py createsuperuser
+```
 
 ### 6. Start the full stack
 
@@ -175,21 +148,14 @@ Follow the prompts to set up an admin account.
 docker compose up -d
 ```
 
-This starts:
-
-- `redis` – Redis broker
-- `db` – PostgreSQL database
-- `web` – Django + Gunicorn
-- `celery` – Celery worker
-- `nginx` – Reverse proxy on port `80`
-
 ### 7. Access the application
 
-- **Main site**: `http://localhost`
+| View            | URL                     |
+|------------------|--------------------------|
+| Main site        | `http://localhost`      |
+| Admin panel      | `http://localhost/admin`|
 
-Log in using the superuser credentials you created earlier.
-
-To view logs for a specific service:
+To tail logs for a specific service:
 
 ```bash
 docker compose logs -f web
@@ -203,55 +169,18 @@ To stop the stack:
 docker compose down
 ```
 
-> **Note**: Data is persisted in Docker volumes (`postgres_data`, `media_data`) even after `docker compose down`. Use `docker compose down -v` to remove volumes as well.
+---
+
+## 📓 Notes
+
+- Data persists in Docker volumes (`postgres_data`, `media_data`) across `docker compose down`; use `docker compose down -v` to also remove volumes.
+- `SECRET_KEY` and `POSTGRES_PASSWORD` should be replaced with strong, unique values outside local development.
+- Static files are collected into `/app/staticfiles` at image build time (`collectstatic --noinput`); user uploads (email attachments, etc.) live in `/app/media`, backed by `media_data`.
+- `GEMINI_API_KEY` is optional — AI-assisted email content only activates if it's set.
+- All Django management commands can be run via `docker compose run --rm web python manage.py <command>`.
 
 ---
 
-## Development tips
-
-- **Run management commands**
-
-  You can run any Django management command in the `web` container:
-
-  ```bash
-  docker compose run --rm web python manage.py <command>
-  ```
-
-  Examples:
-
-  ```bash
-  docker compose run --rm web python manage.py shell
-  docker compose run --rm web python manage.py makemigrations
-  ```
-
-- **Static & media files**
-  - Static files are collected into `/app/staticfiles` during the image build.
-  - User uploads (email attachments, etc.) are stored in `/app/media`, backed by the `media_data` Docker volume.
-
----
-
-## Project structure (high level)
-
-Some key directories and modules:
-
-- `awd_main/`
-  - Core Django project, settings, URLs, WSGI config.
-- `Data_entry/`
-  - Models for `CustomUser`, `Student`, `Employee`, subscription plans, usage tracking, CSV import/export logic, and related views.
-- `Email/`
-  - Email lists, subscribers, email campaigns, tracking models, and views.
-- `uploads/`
-  - File upload model used for CSV imports.
-- `nginx/default.conf`
-  - Nginx configuration used by the `nginx` service in Docker.
-- `docker-compose.yml`
-  - Definition of all services (web, celery, db, redis, nginx, volumes, and networks).
-- `Dockerfile`
-  - Build instructions for the Django/Gunicorn container.
-
----
-
-
-
-With these steps and configurations, you can run AWD as a **production-like, containerized data & email automation platform** with minimal manual setup.
-
+<p align="center">
+  Built by <a href="https://github.com/anirudhkhemriyaa">anirudhkhemriyaa</a>
+</p>
